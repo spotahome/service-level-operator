@@ -35,9 +35,11 @@ BUILD_IMAGE_CMD := VERSION=${VERSION} ./hack/scripts/build-image.sh
 DEBUG_CMD := go run ./cmd/service-level-operator/* --debug
 DEV_CMD := $(DEBUG_CMD) --development
 FAKE_CMD := $(DEV_CMD) --fake
+K8S_CODE_GEN_CMD := ./hack/scripts/k8scodegen.sh
 DEPS_CMD := GO111MODULE=on go mod tidy && GO111MODULE=on go mod vendor
 K8S_VERSION := "1.10.7"
 SET_K8S_DEPS_CMD := GO111MODULE=on go mod edit \
+    -require=k8s.io/apiextensions-apiserver@kubernetes-${K8S_VERSION} \
 	-require=k8s.io/client-go@kubernetes-${K8S_VERSION} \
 	-require=k8s.io/apimachinery@kubernetes-${K8S_VERSION} \
 	-require=k8s.io/api@kubernetes-${K8S_VERSION} && \
@@ -84,6 +86,9 @@ build-image:
 .PHONY: set-k8s-deps
 set-k8s-deps:
 	$(SET_K8S_DEPS_CMD)
+
+k8s-code-gen:
+	$(K8S_CODE_GEN_CMD)
 
 # Test stuff in dev
 .PHONY: unit-test
