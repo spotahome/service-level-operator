@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  toilet:
+    build:
+      context: ../..
+      dockerfile: docker/dev/Dockerfile
+    volumes:
+      - ../..:/src
+      - ~/.bash_history.service-level-operator:/home/service-level-operator/.bash_history
+      - ~/.kube:/home/service-level-operator/.kube:ro
+      - ~/.gitconfig:/home/service-level-operator/.gitconfig:ro
+      - ~/.ssh:/home/service-level-operator/.ssh
+    command: ["go", "run", "./cmd/service-level-operator/main.go", "-development", "-debug"]
+    ports:
+      - "8080:8080"
