@@ -31,6 +31,7 @@ import (
 // FakeServiceLevels implements ServiceLevelInterface
 type FakeServiceLevels struct {
 	Fake *FakeMeasureV1alpha1
+	ns   string
 }
 
 var servicelevelsResource = schema.GroupVersionResource{Group: "measure.slok.xyz", Version: "v1alpha1", Resource: "servicelevels"}
@@ -40,7 +41,8 @@ var servicelevelsKind = schema.GroupVersionKind{Group: "measure.slok.xyz", Versi
 // Get takes name of the serviceLevel, and returns the corresponding serviceLevel object, and an error if there is any.
 func (c *FakeServiceLevels) Get(name string, options v1.GetOptions) (result *v1alpha1.ServiceLevel, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewRootGetAction(servicelevelsResource, name), &v1alpha1.ServiceLevel{})
+		Invokes(testing.NewGetAction(servicelevelsResource, c.ns, name), &v1alpha1.ServiceLevel{})
+
 	if obj == nil {
 		return nil, err
 	}
@@ -50,7 +52,8 @@ func (c *FakeServiceLevels) Get(name string, options v1.GetOptions) (result *v1a
 // List takes label and field selectors, and returns the list of ServiceLevels that match those selectors.
 func (c *FakeServiceLevels) List(opts v1.ListOptions) (result *v1alpha1.ServiceLevelList, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewRootListAction(servicelevelsResource, servicelevelsKind, opts), &v1alpha1.ServiceLevelList{})
+		Invokes(testing.NewListAction(servicelevelsResource, servicelevelsKind, c.ns, opts), &v1alpha1.ServiceLevelList{})
+
 	if obj == nil {
 		return nil, err
 	}
@@ -71,13 +74,15 @@ func (c *FakeServiceLevels) List(opts v1.ListOptions) (result *v1alpha1.ServiceL
 // Watch returns a watch.Interface that watches the requested serviceLevels.
 func (c *FakeServiceLevels) Watch(opts v1.ListOptions) (watch.Interface, error) {
 	return c.Fake.
-		InvokesWatch(testing.NewRootWatchAction(servicelevelsResource, opts))
+		InvokesWatch(testing.NewWatchAction(servicelevelsResource, c.ns, opts))
+
 }
 
 // Create takes the representation of a serviceLevel and creates it.  Returns the server's representation of the serviceLevel, and an error, if there is any.
 func (c *FakeServiceLevels) Create(serviceLevel *v1alpha1.ServiceLevel) (result *v1alpha1.ServiceLevel, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewRootCreateAction(servicelevelsResource, serviceLevel), &v1alpha1.ServiceLevel{})
+		Invokes(testing.NewCreateAction(servicelevelsResource, c.ns, serviceLevel), &v1alpha1.ServiceLevel{})
+
 	if obj == nil {
 		return nil, err
 	}
@@ -87,7 +92,8 @@ func (c *FakeServiceLevels) Create(serviceLevel *v1alpha1.ServiceLevel) (result 
 // Update takes the representation of a serviceLevel and updates it. Returns the server's representation of the serviceLevel, and an error, if there is any.
 func (c *FakeServiceLevels) Update(serviceLevel *v1alpha1.ServiceLevel) (result *v1alpha1.ServiceLevel, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewRootUpdateAction(servicelevelsResource, serviceLevel), &v1alpha1.ServiceLevel{})
+		Invokes(testing.NewUpdateAction(servicelevelsResource, c.ns, serviceLevel), &v1alpha1.ServiceLevel{})
+
 	if obj == nil {
 		return nil, err
 	}
@@ -97,13 +103,14 @@ func (c *FakeServiceLevels) Update(serviceLevel *v1alpha1.ServiceLevel) (result 
 // Delete takes name of the serviceLevel and deletes it. Returns an error if one occurs.
 func (c *FakeServiceLevels) Delete(name string, options *v1.DeleteOptions) error {
 	_, err := c.Fake.
-		Invokes(testing.NewRootDeleteAction(servicelevelsResource, name), &v1alpha1.ServiceLevel{})
+		Invokes(testing.NewDeleteAction(servicelevelsResource, c.ns, name), &v1alpha1.ServiceLevel{})
+
 	return err
 }
 
 // DeleteCollection deletes a collection of objects.
 func (c *FakeServiceLevels) DeleteCollection(options *v1.DeleteOptions, listOptions v1.ListOptions) error {
-	action := testing.NewRootDeleteCollectionAction(servicelevelsResource, listOptions)
+	action := testing.NewDeleteCollectionAction(servicelevelsResource, c.ns, listOptions)
 
 	_, err := c.Fake.Invokes(action, &v1alpha1.ServiceLevelList{})
 	return err
@@ -112,7 +119,8 @@ func (c *FakeServiceLevels) DeleteCollection(options *v1.DeleteOptions, listOpti
 // Patch applies the patch and returns the patched serviceLevel.
 func (c *FakeServiceLevels) Patch(name string, pt types.PatchType, data []byte, subresources ...string) (result *v1alpha1.ServiceLevel, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewRootPatchSubresourceAction(servicelevelsResource, name, data, subresources...), &v1alpha1.ServiceLevel{})
+		Invokes(testing.NewPatchSubresourceAction(servicelevelsResource, c.ns, name, data, subresources...), &v1alpha1.ServiceLevel{})
+
 	if obj == nil {
 		return nil, err
 	}

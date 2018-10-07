@@ -35,8 +35,8 @@ type MeasureV1alpha1Client struct {
 	restClient rest.Interface
 }
 
-func (c *MeasureV1alpha1Client) ServiceLevels() ServiceLevelInterface {
-	return newServiceLevels(c)
+func (c *MeasureV1alpha1Client) ServiceLevels(namespace string) ServiceLevelInterface {
+	return newServiceLevels(c, namespace)
 }
 
 // NewForConfig creates a new MeasureV1alpha1Client for the given config.

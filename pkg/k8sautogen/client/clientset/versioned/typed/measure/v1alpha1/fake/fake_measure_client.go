@@ -28,8 +28,8 @@ type FakeMeasureV1alpha1 struct {
 	*testing.Fake
 }
 
-func (c *FakeMeasureV1alpha1) ServiceLevels() v1alpha1.ServiceLevelInterface {
-	return &FakeServiceLevels{c}
+func (c *FakeMeasureV1alpha1) ServiceLevels(namespace string) v1alpha1.ServiceLevelInterface {
+	return &FakeServiceLevels{c, namespace}
 }
 
 // RESTClient returns a RESTClient that is used to communicate

@@ -18,7 +18,7 @@ const (
 	ServiceLevelKind       = "ServiceLevel"
 	ServiceLevelName       = "servicelevel"
 	ServiceLevelNamePlural = "servicelevels"
-	ServiceLevelScope      = apiextensionsv1beta1.ClusterScoped
+	ServiceLevelScope      = apiextensionsv1beta1.NamespaceScoped
 )
 
 // SchemeGroupVersion is group version used to register these objects

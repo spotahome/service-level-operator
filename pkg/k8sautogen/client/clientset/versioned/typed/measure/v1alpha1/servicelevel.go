@@ -30,7 +30,7 @@ import (
 // ServiceLevelsGetter has a method to return a ServiceLevelInterface.
 // A group's client should implement this interface.
 type ServiceLevelsGetter interface {
-	ServiceLevels() ServiceLevelInterface
+	ServiceLevels(namespace string) ServiceLevelInterface
 }
 
 // ServiceLevelInterface has methods to work with ServiceLevel resources.
@@ -49,12 +49,14 @@ type ServiceLevelInterface interface {
 // serviceLevels implements ServiceLevelInterface
 type serviceLevels struct {
 	client rest.Interface
+	ns     string
 }
 
 // newServiceLevels returns a ServiceLevels
-func newServiceLevels(c *MeasureV1alpha1Client) *serviceLevels {
+func newServiceLevels(c *MeasureV1alpha1Client, namespace string) *serviceLevels {
 	return &serviceLevels{
 		client: c.RESTClient(),
+		ns:     namespace,
 	}
 }
 
@@ -62,6 +64,7 @@ func newServiceLevels(c *MeasureV1alpha1Client) *serviceLevels {
 func (c *serviceLevels) Get(name string, options v1.GetOptions) (result *v1alpha1.ServiceLevel, err error) {
 	result = &v1alpha1.ServiceLevel{}
 	err = c.client.Get().
+		Namespace(c.ns).
 		Resource("servicelevels").
 		Name(name).
 		VersionedParams(&options, scheme.ParameterCodec).
@@ -74,6 +77,7 @@ func (c *serviceLevels) Get(name string, options v1.GetOptions) (result *v1alpha
 func (c *serviceLevels) List(opts v1.ListOptions) (result *v1alpha1.ServiceLevelList, err error) {
 	result = &v1alpha1.ServiceLevelList{}
 	err = c.client.Get().
+		Namespace(c.ns).
 		Resource("servicelevels").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Do().
@@ -85,6 +89,7 @@ func (c *serviceLevels) List(opts v1.ListOptions) (result *v1alpha1.ServiceLevel
 func (c *serviceLevels) Watch(opts v1.ListOptions) (watch.Interface, error) {
 	opts.Watch = true
 	return c.client.Get().
+		Namespace(c.ns).
 		Resource("servicelevels").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Watch()
@@ -94,6 +99,7 @@ func (c *serviceLevels) Watch(opts v1.ListOptions) (watch.Interface, error) {
 func (c *serviceLevels) Create(serviceLevel *v1alpha1.ServiceLevel) (result *v1alpha1.ServiceLevel, err error) {
 	result = &v1alpha1.ServiceLevel{}
 	err = c.client.Post().
+		Namespace(c.ns).
 		Resource("servicelevels").
 		Body(serviceLevel).
 		Do().
@@ -105,6 +111,7 @@ func (c *serviceLevels) Create(serviceLevel *v1alpha1.ServiceLevel) (result *v1a
 func (c *serviceLevels) Update(serviceLevel *v1alpha1.ServiceLevel) (result *v1alpha1.ServiceLevel, err error) {
 	result = &v1alpha1.ServiceLevel{}
 	err = c.client.Put().
+		Namespace(c.ns).
 		Resource("servicelevels").
 		Name(serviceLevel.Name).
 		Body(serviceLevel).
@@ -116,6 +123,7 @@ func (c *serviceLevels) Update(serviceLevel *v1alpha1.ServiceLevel) (result *v1a
 // Delete takes name of the serviceLevel and deletes it. Returns an error if one occurs.
 func (c *serviceLevels) Delete(name string, options *v1.DeleteOptions) error {
 	return c.client.Delete().
+		Namespace(c.ns).
 		Resource("servicelevels").
 		Name(name).
 		Body(options).
@@ -126,6 +134,7 @@ func (c *serviceLevels) Delete(name string, options *v1.DeleteOptions) error {
 // DeleteCollection deletes a collection of objects.
 func (c *serviceLevels) DeleteCollection(options *v1.DeleteOptions, listOptions v1.ListOptions) error {
 	return c.client.Delete().
+		Namespace(c.ns).
 		Resource("servicelevels").
 		VersionedParams(&listOptions, scheme.ParameterCodec).
 		Body(options).
@@ -137,6 +146,7 @@ func (c *serviceLevels) DeleteCollection(options *v1.DeleteOptions, listOptions 
 func (c *serviceLevels) Patch(name string, pt types.PatchType, data []byte, subresources ...string) (result *v1alpha1.ServiceLevel, err error) {
 	result = &v1alpha1.ServiceLevel{}
 	err = c.client.Patch(pt).
+		Namespace(c.ns).
 		Resource("servicelevels").
 		SubResource(subresources...).
 		Name(name).
