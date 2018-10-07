@@ -24,9 +24,49 @@ type ServiceLevel struct {
 
 // ServiceLevelSpec is the spec for a ServiceLevel resource.
 type ServiceLevelSpec struct {
-	// Disable will disable the measure of the service level.
+	// ServiceLevelObjectives is the list of SLOs of a service/app.
 	// +optional
+	ServiceLevelObjectives []SLO `json:"serviceLevelObjectives,omitempty"`
+}
+
+// SLO represents a SLO.
+type SLO struct {
+	// Name of the SLO, must be made of [a-zA-z0-9] and '_'(underscore) characters.
+	Name string `json:"name"`
+	// Description is a description of the SLO.
+	// +optional
+	Description string `json:"description,omitempty"`
+	// Disable will disable the SLO.
 	Disable bool `json:"disable,omitempty"`
+	// Availability is the percentage of availability target for the SLO.
+	Availability float64 `json:"availability"`
+	// Labels are the labels that will be set to the output metrics of this SLO.
+	// +optional
+	Labels map[string]string `json:"labels,omitempty"`
+	// ServiceLevelIndicator is the SLI associated with the SLO.
+	ServiceLevelIndicator SLI `json:"serviceLevelIndicator"`
+}
+
+// SLI is the SLI to get for the SLO.
+type SLI struct {
+	SLISource `json:",inline"`
+}
+
+// SLISource is where the SLI will get from.
+type SLISource struct {
+	// Prometheus is the prometheus SLI source.
+	Prometheus *PrometheusSLISource `json:"prometheus,omitempty"`
+}
+
+// PrometheusSLISource is the source to get SLIs from a Prometheus backend.
+type PrometheusSLISource struct {
+	// Address is the address of the Prometheus.
+	Address string `json:"address"`
+	// TotalQuery is the query that gets the total that will be the base to get the unavailability
+	// of the SLO based on the errorQuery (errorQuery / totalQuery).
+	TotalQuery string `json:"totalQuery"`
+	// ErrorQuery is the query that gets the total errors that then will be divided against the total.
+	ErrorQuery string `json:"errorQuery"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
