@@ -19,7 +19,7 @@ require (
 	github.com/onsi/gomega v1.4.2 // indirect
 	github.com/opentracing/opentracing-go v1.0.2 // indirect
 	github.com/pborman/uuid v1.2.0 // indirect
-	github.com/prometheus/client_golang v0.8.0 // indirect
+	github.com/prometheus/client_golang v0.9.0-pre1.0.20181001174001-0a8115f42e03
 	github.com/prometheus/client_model v0.0.0-20180712105110-5c3871d89910 // indirect
 	github.com/prometheus/common v0.0.0-20180801064454-c7de2306084e // indirect
 	github.com/prometheus/procfs v0.0.0-20181005140218-185b4288413d // indirect

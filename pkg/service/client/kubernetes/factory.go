@@ -26,7 +26,7 @@ type factory struct {
 	aexcli apiextensionscli.Interface
 }
 
-// New returns a new kubernetes client factory.
+// NewFactory returns a new kubernetes client factory.
 func NewFactory(config *rest.Config) ClientFactory {
 	return &factory{
 		restCfg: config,
