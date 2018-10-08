@@ -40,11 +40,10 @@ type SLO struct {
 	Disable bool `json:"disable,omitempty"`
 	// Availability is the percentage of availability target for the SLO.
 	Availability float64 `json:"availability"`
-	// Labels are the labels that will be set to the output metrics of this SLO.
-	// +optional
-	Labels map[string]string `json:"labels,omitempty"`
 	// ServiceLevelIndicator is the SLI associated with the SLO.
 	ServiceLevelIndicator SLI `json:"serviceLevelIndicator"`
+	// Output is the output backedn of the SLO.
+	Output Output `json:"output"`
 }
 
 // SLI is the SLI to get for the SLO.
@@ -55,6 +54,7 @@ type SLI struct {
 // SLISource is where the SLI will get from.
 type SLISource struct {
 	// Prometheus is the prometheus SLI source.
+	// +optional
 	Prometheus *PrometheusSLISource `json:"prometheus,omitempty"`
 }
 
@@ -67,6 +67,23 @@ type PrometheusSLISource struct {
 	TotalQuery string `json:"totalQuery"`
 	// ErrorQuery is the query that gets the total errors that then will be divided against the total.
 	ErrorQuery string `json:"errorQuery"`
+}
+
+// Output is how the SLO will expose the generated SLO.
+type Output struct {
+	//Prometheus is the prometheus format for the SLO output.
+	// +optional
+	Prometheus *OutputPrometheusSource `json:"prometheus,omitempty"`
+}
+
+//OutputPrometheusSource  is the source of the output in prometheus format.
+type OutputPrometheusSource struct {
+	// Prefix is a prefix to set to the generated output metrics.
+	// +optional
+	Prefix string `json:"prefix,omitempty"`
+	// Labels are the labels that will be set to the output metrics of this SLO.
+	// +optional
+	Labels map[string]string `json:"labels,omitempty"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object

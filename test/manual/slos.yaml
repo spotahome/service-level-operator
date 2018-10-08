@@ -8,16 +8,19 @@ spec:
     description: 99.99% of requests must be served with <500 status code.
     disable: false
     availability: 99.99
-    labels:
-      env: production
-      team: frontend-core
     serviceLevelIndicator:
       prometheus:
         address: http://myprometheus:9090
         totalQuery: |
           sum(
-            increase(skipper_serve_host_duration_seconds_count{host="www_spotahome_com"}[5m]))
+            increase(skipper_serve_host_duration_seconds_count{host="www_spotahome_com"}[2m]))
         errorQuery: |
           sum(
-            increase(skipper_serve_host_duration_seconds_count{host="www_spotahome_com", code=~"5.."}[5m]))
-    
+            increase(skipper_serve_host_duration_seconds_count{host="www_spotahome_com", code=~"5.."}[2m]))
+    output:
+      prometheus:
+        prefix: ""
+        labels:
+          env: production
+          team: frontend-core
+
