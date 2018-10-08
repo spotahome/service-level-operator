@@ -27,6 +27,7 @@ require (
 	github.com/spf13/pflag v1.0.3 // indirect
 	github.com/spotahome/kooper v0.4.1
 	github.com/stretchr/objx v0.1.1 // indirect
+	github.com/stretchr/testify v1.2.2
 	golang.org/x/crypto v0.0.0-20181001203147-e3636079e1a4 // indirect
 	golang.org/x/net v0.0.0-20181005035420-146acd28ed58 // indirect
 	golang.org/x/sys v0.0.0-20181005133103-4497e2df6f9e // indirect
