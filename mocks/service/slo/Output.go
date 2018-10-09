@@ -12,13 +12,13 @@ type Output struct {
 	mock.Mock
 }
 
-// Create provides a mock function with given fields: _a0, result
-func (_m *Output) Create(_a0 *v1alpha1.SLO, result *sli.Result) error {
-	ret := _m.Called(_a0, result)
+// Create provides a mock function with given fields: serviceLevel, _a1, result
+func (_m *Output) Create(serviceLevel *v1alpha1.ServiceLevel, _a1 *v1alpha1.SLO, result *sli.Result) error {
+	ret := _m.Called(serviceLevel, _a1, result)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(*v1alpha1.SLO, *sli.Result) error); ok {
-		r0 = rf(_a0, result)
+	if rf, ok := ret.Get(0).(func(*v1alpha1.ServiceLevel, *v1alpha1.SLO, *sli.Result) error); ok {
+		r0 = rf(serviceLevel, _a1, result)
 	} else {
 		r0 = ret.Error(0)
 	}
