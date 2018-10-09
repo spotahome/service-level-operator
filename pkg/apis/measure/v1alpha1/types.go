@@ -73,11 +73,11 @@ type PrometheusSLISource struct {
 type Output struct {
 	//Prometheus is the prometheus format for the SLO output.
 	// +optional
-	Prometheus *OutputPrometheusSource `json:"prometheus,omitempty"`
+	Prometheus *PrometheusOutputSource `json:"prometheus,omitempty"`
 }
 
-//OutputPrometheusSource  is the source of the output in prometheus format.
-type OutputPrometheusSource struct {
+// PrometheusOutputSource  is the source of the output in prometheus format.
+type PrometheusOutputSource struct {
 	// Prefix is a prefix to set to the generated output metrics.
 	// +optional
 	Prefix string `json:"prefix,omitempty"`
