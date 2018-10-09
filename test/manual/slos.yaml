@@ -7,7 +7,7 @@ spec:
   - name: "9999_http_request_lt_500"
     description: 99.99% of requests must be served with <500 status code.
     disable: false
-    availability: 99.99
+    availabilityPercent: 99.99
     serviceLevelIndicator:
       prometheus:
         address: http://myprometheus:9090
@@ -19,7 +19,6 @@ spec:
             increase(skipper_serve_host_duration_seconds_count{host="www_spotahome_com", code=~"5.."}[2m]))
     output:
       prometheus:
-        prefix: ""
         labels:
           env: production
           team: frontend-core

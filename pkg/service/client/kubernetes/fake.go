@@ -54,9 +54,9 @@ var (
 			Spec: measurev1alpha1.ServiceLevelSpec{
 				ServiceLevelObjectives: []measurev1alpha1.SLO{
 					{
-						Name:         "fake_slo0",
-						Description:  "fake slo 0.",
-						Availability: 99.99,
+						Name:                         "fake_slo0",
+						Description:                  "fake slo 0.",
+						AvailabilityObjectivePercent: 99.99,
 						ServiceLevelIndicator: measurev1alpha1.SLI{
 							SLISource: measurev1alpha1.SLISource{
 								Prometheus: &measurev1alpha1.PrometheusSLISource{
@@ -76,9 +76,9 @@ var (
 						},
 					},
 					{
-						Name:         "fake_slo1",
-						Description:  "fake slo 1.",
-						Availability: 99.9,
+						Name:                         "fake_slo1",
+						Description:                  "fake slo 1.",
+						AvailabilityObjectivePercent: 99.9,
 						ServiceLevelIndicator: measurev1alpha1.SLI{
 							SLISource: measurev1alpha1.SLISource{
 								Prometheus: &measurev1alpha1.PrometheusSLISource{
@@ -98,9 +98,9 @@ var (
 						},
 					},
 					{
-						Name:         "fake_slo2",
-						Description:  "fake slo 2.",
-						Availability: 99.998,
+						Name:                         "fake_slo2",
+						Description:                  "fake slo 2.",
+						AvailabilityObjectivePercent: 99.998,
 						ServiceLevelIndicator: measurev1alpha1.SLI{
 							SLISource: measurev1alpha1.SLISource{
 								Prometheus: &measurev1alpha1.PrometheusSLISource{
@@ -130,9 +130,9 @@ var (
 			Spec: measurev1alpha1.ServiceLevelSpec{
 				ServiceLevelObjectives: []measurev1alpha1.SLO{
 					{
-						Name:         "fake_slo3",
-						Description:  "fake slo 3.",
-						Availability: 99,
+						Name:                         "fake_slo3",
+						Description:                  "fake slo 3.",
+						AvailabilityObjectivePercent: 99,
 						ServiceLevelIndicator: measurev1alpha1.SLI{
 							SLISource: measurev1alpha1.SLISource{
 								Prometheus: &measurev1alpha1.PrometheusSLISource{

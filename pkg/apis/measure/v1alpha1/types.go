@@ -38,8 +38,8 @@ type SLO struct {
 	Description string `json:"description,omitempty"`
 	// Disable will disable the SLO.
 	Disable bool `json:"disable,omitempty"`
-	// Availability is the percentage of availability target for the SLO.
-	Availability float64 `json:"availability"`
+	// AvailabilityObjectivePercent is the percentage of availability target for the SLO.
+	AvailabilityObjectivePercent float64 `json:"availabilityObjectivePercent"`
 	// ServiceLevelIndicator is the SLI associated with the SLO.
 	ServiceLevelIndicator SLI `json:"serviceLevelIndicator"`
 	// Output is the output backedn of the SLO.
@@ -78,9 +78,6 @@ type Output struct {
 
 // PrometheusOutputSource  is the source of the output in prometheus format.
 type PrometheusOutputSource struct {
-	// Prefix is a prefix to set to the generated output metrics.
-	// +optional
-	Prefix string `json:"prefix,omitempty"`
 	// Labels are the labels that will be set to the output metrics of this SLO.
 	// +optional
 	Labels map[string]string `json:"labels,omitempty"`
