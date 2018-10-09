@@ -51,14 +51,108 @@ var (
 				Name:      "fake-service0",
 				Namespace: "fake",
 			},
-			Spec: measurev1alpha1.ServiceLevelSpec{},
+			Spec: measurev1alpha1.ServiceLevelSpec{
+				ServiceLevelObjectives: []measurev1alpha1.SLO{
+					{
+						Name:         "fake_slo0",
+						Description:  "fake slo 0.",
+						Availability: 99.99,
+						ServiceLevelIndicator: measurev1alpha1.SLI{
+							SLISource: measurev1alpha1.SLISource{
+								Prometheus: &measurev1alpha1.PrometheusSLISource{
+									Address:    "http://fake:9090",
+									TotalQuery: `slo0_total`,
+									ErrorQuery: `slo0_error`,
+								},
+							},
+						},
+						Output: measurev1alpha1.Output{
+							Prometheus: &measurev1alpha1.PrometheusOutputSource{
+								Labels: map[string]string{
+									"fake": "true",
+									"team": "fake-team0",
+								},
+							},
+						},
+					},
+					{
+						Name:         "fake_slo1",
+						Description:  "fake slo 1.",
+						Availability: 99.9,
+						ServiceLevelIndicator: measurev1alpha1.SLI{
+							SLISource: measurev1alpha1.SLISource{
+								Prometheus: &measurev1alpha1.PrometheusSLISource{
+									Address:    "http://fake:9090",
+									TotalQuery: `slo1_total`,
+									ErrorQuery: `slo1_error`,
+								},
+							},
+						},
+						Output: measurev1alpha1.Output{
+							Prometheus: &measurev1alpha1.PrometheusOutputSource{
+								Labels: map[string]string{
+									"fake": "true",
+									"team": "fake-team1",
+								},
+							},
+						},
+					},
+					{
+						Name:         "fake_slo2",
+						Description:  "fake slo 2.",
+						Availability: 99.998,
+						ServiceLevelIndicator: measurev1alpha1.SLI{
+							SLISource: measurev1alpha1.SLISource{
+								Prometheus: &measurev1alpha1.PrometheusSLISource{
+									Address:    "http://fake:9090",
+									TotalQuery: `slo2_total`,
+									ErrorQuery: `slo2_error`,
+								},
+							},
+						},
+						Output: measurev1alpha1.Output{
+							Prometheus: &measurev1alpha1.PrometheusOutputSource{
+								Labels: map[string]string{
+									"fake": "true",
+									"team": "fake-team2",
+								},
+							},
+						},
+					},
+				},
+			},
 		},
 		&measurev1alpha1.ServiceLevel{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      "fake-service1",
 				Namespace: "fake",
 			},
-			Spec: measurev1alpha1.ServiceLevelSpec{},
+			Spec: measurev1alpha1.ServiceLevelSpec{
+				ServiceLevelObjectives: []measurev1alpha1.SLO{
+					{
+						Name:         "fake_slo3",
+						Description:  "fake slo 3.",
+						Availability: 99,
+						ServiceLevelIndicator: measurev1alpha1.SLI{
+							SLISource: measurev1alpha1.SLISource{
+								Prometheus: &measurev1alpha1.PrometheusSLISource{
+									Address:    "http://fake:9090",
+									TotalQuery: `slo3_total`,
+									ErrorQuery: `slo3_error`,
+								},
+							},
+						},
+						Output: measurev1alpha1.Output{
+							Prometheus: &measurev1alpha1.PrometheusOutputSource{
+								Labels: map[string]string{
+									"fake": "true",
+									"team": "fake-team3",
+								},
+							},
+						},
+					},
+				},
+			},
 		},
 		&measurev1alpha1.ServiceLevel{
 			ObjectMeta: metav1.ObjectMeta{
