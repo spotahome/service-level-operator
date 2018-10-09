@@ -26,7 +26,7 @@ func (r *Result) AvailabilityRatio() (float64, error) {
 		return 1, nil
 	}
 
-	dw, err := r.DowntimeRatio()
+	dw, err := r.ErrorRatio()
 	if err != nil {
 		return 0, err
 	}
@@ -34,9 +34,9 @@ func (r *Result) AvailabilityRatio() (float64, error) {
 	return 1 - dw, nil
 }
 
-// DowntimeRatio returns the downtime of an SLI result in.
+// ErrorRatio returns the error of an SLI result in.
 // ratio unit (0-1).
-func (r *Result) DowntimeRatio() (float64, error) {
+func (r *Result) ErrorRatio() (float64, error) {
 	if r.TotalQ < r.ErrorQ {
 		return 0, fmt.Errorf("%f can't be higher than %f", r.ErrorQ, r.TotalQ)
 	}

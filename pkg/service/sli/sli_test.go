@@ -15,48 +15,48 @@ func TestSLIResult(t *testing.T) {
 		totalQ            float64
 		expAvailability   float64
 		expAvailabiityErr bool
-		expDowntime       float64
-		expDowntimeErr    bool
+		expError          float64
+		expErrorErr       bool
 	}{
 		{
 			name:            "Not having a total quantity should return everything ok.",
 			expAvailability: 1,
-			expDowntime:     1,
+			expError:        1,
 		},
 		{
 			name:              "Having more errors than total should be impossible.",
 			errorQ:            600,
 			totalQ:            300,
-			expDowntimeErr:    true,
+			expErrorErr:       true,
 			expAvailabiityErr: true,
 		},
 		{
-			name:            "If half of the total are errors then the ratio of availability and downtime should be 0.5.",
+			name:            "If half of the total are errors then the ratio of availability and error should be 0.5.",
 			errorQ:          300,
 			totalQ:          600,
 			expAvailability: 0.5,
-			expDowntime:     0.5,
+			expError:        0.5,
 		},
 		{
 			name:            "If a 33% of errors then the ratios should be 0.33 and 0.66.",
 			errorQ:          33,
 			totalQ:          100,
 			expAvailability: 0.6699999999999999,
-			expDowntime:     0.33,
+			expError:        0.33,
 		},
 		{
 			name:            "In small quantities the ratios should be correctly calculated.",
 			errorQ:          4,
 			totalQ:          10,
 			expAvailability: 0.6,
-			expDowntime:     0.4,
+			expError:        0.4,
 		},
 		{
 			name:            "In big quantities the ratios should be correctly calculated.",
 			errorQ:          240,
 			totalQ:          10000000,
 			expAvailability: 0.999976,
-			expDowntime:     0.000024,
+			expError:        0.000024,
 		},
 	}
 
@@ -76,11 +76,11 @@ func TestSLIResult(t *testing.T) {
 				assert.Equal(test.expAvailability, av)
 			}
 
-			dw, err := res.DowntimeRatio()
-			if test.expDowntimeErr {
+			dw, err := res.ErrorRatio()
+			if test.expErrorErr {
 				assert.Error(err)
 			} else if assert.NoError(err) {
-				assert.Equal(test.expDowntime, dw)
+				assert.Equal(test.expError, dw)
 			}
 		})
 	}
