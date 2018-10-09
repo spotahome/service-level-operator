@@ -1,12 +1,9 @@
 package sli
 
 import (
-	"errors"
 	"fmt"
 
 	measurev1alpha1 "github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1"
-	"github.com/slok/service-level-operator/pkg/log"
-	promcli "github.com/slok/service-level-operator/pkg/service/client/prometheus"
 )
 
 // Result is the result of getting a SLI from a backend.
@@ -56,24 +53,4 @@ func (r *Result) DowntimeRatio() (float64, error) {
 type Retriever interface {
 	// Retrieve returns the result of a SLI retrieved from the implemented backend.
 	Retrieve(*measurev1alpha1.SLI) (Result, error)
-}
-
-// prometheus knows how to get SLIs from a prometheus backend.
-type prometheus struct {
-	cliFactory promcli.ClientFactory
-	logger     log.Logger
-}
-
-// NewPrometheus returns a new prometheus SLI service.
-func NewPrometheus(promCliFactory promcli.ClientFactory, logger log.Logger) Retriever {
-	return &prometheus{
-		cliFactory: promCliFactory,
-		logger:     logger,
-	}
-}
-
-// Retrieve satisfies Service interface..
-func (p *prometheus) Retrieve(sli *measurev1alpha1.SLI) (Result, error) {
-	// TODO
-	return Result{}, errors.New("not implemented")
 }
