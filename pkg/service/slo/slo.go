@@ -10,7 +10,7 @@ import (
 type Output interface {
 	// Create will create the SLO result on the specific format.
 	// It receives the SLO processed and it's result.
-	Create(slo *measurev1alpha1.SLO, result *sli.Result) error
+	Create(serviceLevel *measurev1alpha1.ServiceLevel, slo *measurev1alpha1.SLO, result *sli.Result) error
 }
 
 type logger struct {
@@ -26,13 +26,14 @@ func NewLogger(l log.Logger) Output {
 }
 
 // Create will log the result on the console.
-func (l *logger) Create(slo *measurev1alpha1.SLO, result *sli.Result) error {
+func (l *logger) Create(serviceLevel *measurev1alpha1.ServiceLevel, slo *measurev1alpha1.SLO, result *sli.Result) error {
 	down, err := result.DowntimeRatio()
 	if err != nil {
 		return err
 	}
-	l.logger.With("slo", slo.Name).
+	l.logger.With("id", serviceLevel.Name).
+		With("slo", slo.Name).
 		With("availability-target", slo.Availability).
-		Infof("SLI downtime result: %s", down)
+		Infof("SLI downtime result: %f", down)
 	return nil
 }
