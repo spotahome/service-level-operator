@@ -27,13 +27,13 @@ func NewLogger(l log.Logger) Output {
 
 // Create will log the result on the console.
 func (l *logger) Create(serviceLevel *measurev1alpha1.ServiceLevel, slo *measurev1alpha1.SLO, result *sli.Result) error {
-	down, err := result.DowntimeRatio()
+	errorRat, err := result.ErrorRatio()
 	if err != nil {
 		return err
 	}
 	l.logger.With("id", serviceLevel.Name).
 		With("slo", slo.Name).
-		With("availability-target", slo.Availability).
-		Infof("SLI downtime result: %f", down)
+		With("availability-target", slo.AvailabilityObjectivePercent).
+		Infof("SLI error ratio: %f", errorRat)
 	return nil
 }
