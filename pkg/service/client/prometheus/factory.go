@@ -41,3 +41,13 @@ func (f *factory) GetV1APIClient(address string) (promv1.API, error) {
 	}
 	return promv1.NewAPI(cli), nil
 }
+
+// MockFactory returns a predefined prometheus v1 API client.
+type MockFactory struct {
+	Cli promv1.API
+}
+
+// GetV1APIClient satisfies ClientFactory interface.
+func (m *MockFactory) GetV1APIClient(_ string) (promv1.API, error) {
+	return m.Cli, nil
+}

@@ -7,3 +7,6 @@ package mocks // import "github.com/slok/service-level-operator/mocks"
 // Service mocks.
 //go:generate mockery -output ./service/sli -outpkg sli -dir ../pkg/service/sli -name Retriever
 //go:generate mockery -output ./service/slo -outpkg slo -dir ../pkg/service/slo -name Output
+
+// Third party
+//go:generate mockery -output ./github.com/prometheus/client_golang/api/prometheus/v1 -outpkg v1 -dir . -name API
