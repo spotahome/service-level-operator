@@ -5,8 +5,11 @@ import (
 	"fmt"
 	"time"
 
+	"golang.org/x/sync/errgroup"
+
 	promv1 "github.com/prometheus/client_golang/api/prometheus/v1"
 	"github.com/prometheus/common/model"
+
 	measurev1alpha1 "github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1"
 	"github.com/slok/service-level-operator/pkg/log"
 	promcli "github.com/slok/service-level-operator/pkg/service/client/prometheus"
@@ -38,23 +41,30 @@ func (p *prometheus) Retrieve(sli *measurev1alpha1.SLI) (Result, error) {
 	// Get both metrics.
 	res := Result{}
 
-	// TODO: goroutines.
-	res.TotalQ, err = p.getVectorMetric(cli, sli.Prometheus.TotalQuery)
+	promclictx, cancel := context.WithTimeout(context.Background(), promCliTimeout)
+	defer cancel()
+
+	// Make queries concurrently.
+	g, ctx := errgroup.WithContext(promclictx)
+	g.Go(func() error {
+		res.TotalQ, err = p.getVectorMetric(ctx, cli, sli.Prometheus.TotalQuery)
+		return err
+	})
+	g.Go(func() error {
+		res.ErrorQ, err = p.getVectorMetric(ctx, cli, sli.Prometheus.ErrorQuery)
+		return err
+	})
+
+	// Wait for the first error or until all of them have finished.
+	err = g.Wait()
 	if err != nil {
-		return res, err
-	}
-	res.ErrorQ, err = p.getVectorMetric(cli, sli.Prometheus.ErrorQuery)
-	if err != nil {
-		return res, err
+		return Result{}, err
 	}
 
 	return res, nil
 }
 
-func (p *prometheus) getVectorMetric(cli promv1.API, query string) (float64, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), promCliTimeout)
-	defer cancel()
-
+func (p *prometheus) getVectorMetric(ctx context.Context, cli promv1.API, query string) (float64, error) {
 	// Make the query.
 	val, err := cli.Query(ctx, query, time.Now())
 	if err != nil {
