@@ -31,9 +31,10 @@ func (f *factory) GetV1APIClient(address string) (promv1.API, error) {
 	f.climu.Lock()
 	f.climu.Unlock()
 
+	var err error
 	cli, ok := f.clis[address]
 	if !ok {
-		cli, err := api.NewClient(api.Config{Address: address})
+		cli, err = api.NewClient(api.Config{Address: address})
 		if err != nil {
 			return nil, err
 		}
