@@ -1,5 +1,5 @@
 apiVersion: measure.slok.xyz/v1alpha1
-kind: serviceLevel
+kind: ServiceLevel
 metadata:
   name: awesome-service
 spec:
@@ -7,10 +7,10 @@ spec:
   - name: "9999_http_request_lt_500"
     description: 99.99% of requests must be served with <500 status code.
     disable: false
-    availabilityPercent: 99.99
+    availabilityObjectivePercent: 99.99
     serviceLevelIndicator:
       prometheus:
-        address: http://myprometheus:9090
+        address: http://127.0.0.1:9091
         totalQuery: |
           sum(
             increase(skipper_serve_host_duration_seconds_count{host="www_spotahome_com"}[2m]))
