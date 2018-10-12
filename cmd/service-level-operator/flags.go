@@ -13,9 +13,10 @@ import (
 
 // defaults
 const (
-	defListenAddress = ":8080"
-	defResyncSeconds = 5
-	defWorkers       = 10
+	defHealthCheckAddress = ":8081"
+	defListenAddress      = ":8080"
+	defResyncSeconds      = 5
+	defWorkers            = 10
 )
 
 type cmdFlags struct {
@@ -45,7 +46,8 @@ func (c *cmdFlags) init() {
 	kubehome := filepath.Join(homedir.HomeDir(), ".kube", "config")
 	// register flags
 	c.fs.StringVar(&c.kubeConfig, "kubeconfig", kubehome, "kubernetes configuration path, only used when development mode enabled")
-	c.fs.StringVar(&c.healthCheckAddr, "healthcheck-addr", defListenAddress, "the address the readiness and liveness healthchecks will be listening")
+	c.fs.StringVar(&c.healthCheckAddr, "healthcheck-addr", defHealthCheckAddress, "the address the readiness and liveness healthchecks will be listening")
+	c.fs.StringVar(&c.listenAddress, "listen-addr", defListenAddress, "the address where the metrics will be exposed")
 	c.fs.IntVar(&c.resyncSeconds, "resync-seconds", defResyncSeconds, "the number of seconds to resync the controllers")
 	c.fs.IntVar(&c.workers, "workers", defWorkers, "the number of concurrent workers per controller handling events")
 	c.fs.BoolVar(&c.development, "development", false, "development flag will allow to run the operator outside a kubernetes cluster")

@@ -1,12 +1,17 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/oklog/run"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	apiextensionscli "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
@@ -16,12 +21,14 @@ import (
 	"github.com/slok/service-level-operator/pkg/log"
 	"github.com/slok/service-level-operator/pkg/operator"
 	kubernetesclifactory "github.com/slok/service-level-operator/pkg/service/client/kubernetes"
+	promclifactory "github.com/slok/service-level-operator/pkg/service/client/prometheus"
 	kubernetesservice "github.com/slok/service-level-operator/pkg/service/kubernetes"
 )
 
 const (
 	kubeCliQPS   = 100
 	kubeCliBurst = 100
+	gracePeriod  = 2 * time.Second
 )
 
 // Main has the main logic of the app.
@@ -47,12 +54,14 @@ func (m *Main) Run() error {
 		m.logger.Warnf("running in faked mode, any external service will be faked")
 	}
 
+	// Create prometheus registry to expose metrics.
+	promReg := prometheus.NewRegistry()
+
 	// Create services
 	k8sstdcli, k8scrdcli, k8saexcli, err := m.createKubernetesClients()
 	if err != nil {
 		return err
 	}
-
 	k8ssvc := kubernetesservice.New(k8sstdcli, k8scrdcli, k8saexcli, m.logger)
 
 	// Prepare our run entrypoints.
@@ -80,10 +89,37 @@ func (m *Main) Run() error {
 		)
 	}
 
+	// Metrics.
+	{
+		mux := http.NewServeMux()
+		mux.Handle("/metrics", promhttp.HandlerFor(promReg, promhttp.HandlerOpts{}))
+		s := http.Server{
+			Addr:    m.flags.listenAddress,
+			Handler: mux,
+		}
+
+		g.Add(
+			func() error {
+				m.logger.Infof("metrics server listening on %s", m.flags.listenAddress)
+				return s.ListenAndServe()
+			},
+			func(_ error) {
+				m.logger.Infof("draining metrics server connections")
+				ctx, cancel := context.WithTimeout(context.Background(), gracePeriod)
+				defer cancel()
+				err := s.Shutdown(ctx)
+				if err != nil {
+					m.logger.Errorf("error while drainning connections on metrics sever")
+				}
+			},
+		)
+	}
+
 	// Operator.
 	{
+		promCliFactory := m.createPrometheusCliFactory()
 		cfg := m.flags.toOperatorConfig()
-		op, err := operator.New(cfg, k8ssvc, m.logger)
+		op, err := operator.New(cfg, promReg, promCliFactory, k8ssvc, m.logger)
 		if err != nil {
 			return err
 		}
@@ -158,6 +194,14 @@ func (m *Main) createKubernetesClients() (kubernetes.Interface, crdcli.Interface
 	}
 
 	return stdcli, crdcli, aexcli, nil
+}
+
+func (m *Main) createPrometheusCliFactory() promclifactory.ClientFactory {
+	if m.flags.fake {
+		return promclifactory.NewFakeFactory()
+	}
+
+	return promclifactory.NewFactory()
 }
 
 func main() {
