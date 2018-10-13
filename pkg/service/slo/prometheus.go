@@ -47,8 +47,8 @@ func NewPrometheus(reg prometheus.Registerer) Output {
 		sloTargetGauge: prometheus.NewGaugeVec(prometheus.GaugeOpts{
 			Namespace: promNS,
 			Subsystem: promSubsystem,
-			Name:      "objective",
-			Help:      "Is the objective of the SLO.",
+			Name:      "objective_ratio",
+			Help:      "Is the objective of the SLO in ratio unit.",
 		}, []string{"service_level", "slo"}),
 
 		reg: reg,
@@ -78,7 +78,7 @@ func (p *prometheusOutput) Create(serviceLevel *measurev1alpha1.ServiceLevel, sl
 	p.sloErrorCounter.WithLabelValues(serviceLevel.Name, slo.Name).Add(errRat)
 	p.sloFullCounter.WithLabelValues(serviceLevel.Name, slo.Name).Add(1)
 
-	// Objective is in %  so we converto to ratio (0-1)
+	// Objective is in %  so we convert to ratio (0-1)
 	objRat := slo.AvailabilityObjectivePercent / 100
 	p.sloTargetGauge.WithLabelValues(serviceLevel.Name, slo.Name).Set(objRat)
 	return nil

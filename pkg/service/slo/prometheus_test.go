@@ -57,7 +57,7 @@ func TestPrometheusOutput(t *testing.T) {
 			expMetrics: []string{
 				`service_level_slo_error_ratio_total{service_level="sl0-test",slo="slo00-test"} 0.000122`,
 				`service_level_slo_full_ratio_total{service_level="sl0-test",slo="slo00-test"} 1`,
-				`service_level_slo_objective{service_level="sl0-test",slo="slo00-test"} 0.9999899999999999`,
+				`service_level_slo_objective_ratio{service_level="sl0-test",slo="slo00-test"} 0.9999899999999999`,
 			},
 		},
 		{
@@ -83,15 +83,15 @@ func TestPrometheusOutput(t *testing.T) {
 			expMetrics: []string{
 				`service_level_slo_error_ratio_total{service_level="sl0-test",slo="slo00-test"} 0.000122`,
 				`service_level_slo_full_ratio_total{service_level="sl0-test",slo="slo00-test"} 1`,
-				`service_level_slo_objective{service_level="sl0-test",slo="slo00-test"} 0.9999899999999999`,
+				`service_level_slo_objective_ratio{service_level="sl0-test",slo="slo00-test"} 0.9999899999999999`,
 
 				`service_level_slo_error_ratio_total{service_level="sl0-test",slo="slo01-test"} 0.3363006923837784`,
 				`service_level_slo_full_ratio_total{service_level="sl0-test",slo="slo01-test"} 1`,
-				`service_level_slo_objective{service_level="sl0-test",slo="slo01-test"} 0.9998`,
+				`service_level_slo_objective_ratio{service_level="sl0-test",slo="slo01-test"} 0.9998`,
 
 				`service_level_slo_error_ratio_total{service_level="sl1-test",slo="slo10-test"} 0.0009766096154773965`,
 				`service_level_slo_full_ratio_total{service_level="sl1-test",slo="slo10-test"} 2`,
-				`service_level_slo_objective{service_level="sl1-test",slo="slo10-test"} 0.9999978`,
+				`service_level_slo_objective_ratio{service_level="sl1-test",slo="slo10-test"} 0.9999978`,
 			},
 		},
 	}
