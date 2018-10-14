@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-  toilet:
+  operator:
     build:
       context: ../..
       dockerfile: docker/dev/Dockerfile
@@ -11,6 +11,13 @@ services:
       - ~/.kube:/home/service-level-operator/.kube:ro
       - ~/.gitconfig:/home/service-level-operator/.gitconfig:ro
       - ~/.ssh:/home/service-level-operator/.ssh
-    command: ["go", "run", "./cmd/service-level-operator/main.go", "-development", "-debug"]
+    command: ["go", "run", "./cmd/service-level-operator/main.go", "./cmd/service-level-operator/flags.go", "-development", "-debug", "-fake"]
     ports:
       - "8080:8080"
+
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports: 
+      - 9090:9090

@@ -29,7 +29,9 @@ DEV_DIR := ./docker/dev
 UNIT_TEST_CMD := ./hack/scripts/unit-test.sh
 INTEGRATION_TEST_CMD := ./hack/scripts/integration-test.sh
 MOCKS_CMD := ./hack/scripts/mockgen.sh
-DOCKER_RUN_CMD := docker run -v ${PWD}:/src --rm -it $(SERVICE_NAME)
+DOCKER_RUN_CMD := docker run \
+	-v ${PWD}:/src \
+	--rm -it $(SERVICE_NAME)
 BUILD_BINARY_CMD := VERSION=${VERSION} ./hack/scripts/build-binary.sh
 BUILD_IMAGE_CMD := VERSION=${VERSION} ./hack/scripts/build-image.sh
 DEBUG_CMD := go run ./cmd/service-level-operator/* --debug
@@ -67,7 +69,7 @@ build:
 	docker build -t $(SERVICE_NAME) --build-arg uid=$(UID) --build-arg  gid=$(GID) -f $(DEV_DIR)/Dockerfile .
 
 # run the development stack.
-.PHONY: shell
+.PHONY: stack
 stack: deps-development
 	cd $(DEV_DIR) && \
     ( docker-compose -p $(SERVICE_NAME) up --build; \
@@ -103,7 +105,9 @@ test: integration-test
 # Mocks stuff in dev
 .PHONY: mocks
 mocks: build
-	$(DOCKER_RUN_CMD) /bin/sh -c '$(MOCKS_CMD)'
+	# FIX: Problem using go mod with vektra/mockery.
+	#$(DOCKER_RUN_CMD) /bin/sh -c '$(MOCKS_CMD)'
+	$(MOCKS_CMD)
 
 .PHONY: dev
 dev:
