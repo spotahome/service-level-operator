@@ -112,6 +112,9 @@ So `(1 - service_level_slo_objective_ratio) * 43200 * increase(service_level_slo
 
 If we take that last part and divide for the total error budget we have for the month (`(1 - service_level_slo_objective_ratio) * 43200 * increase(service_level_slo_full_ratio_total[1m])`) this returns us a ratio of the error budget consumed. Multiply by 100 and we have the percent of error budget consumed after `${range}`.
 
-``
+## TODO
+
+- Don't serve metric counters that are not present anymore.
+- Dynamic labels
 
 [sre-book-slo]: https://landing.google.com/sre/book/chapters/service-level-objectives.html
