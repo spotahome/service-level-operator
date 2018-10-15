@@ -41,6 +41,7 @@ func (h *Handler) Add(_ context.Context, obj runtime.Object) error {
 	// Retrieve the SLIs.
 	// TODO: Concurrency and don't stop if one of the SLOs fails.
 	for _, slo := range slc.Spec.ServiceLevelObjectives {
+		slo := slo
 		err := h.processSLO(slc, &slo)
 		if err != nil {
 			return err

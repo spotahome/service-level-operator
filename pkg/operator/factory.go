@@ -36,7 +36,7 @@ func New(cfg Config, promreg *prometheus.Registry, promCliFactory promcli.Client
 
 	// Create services.
 	retriever := sli.NewPrometheus(promCliFactory, logger)
-	output := slo.NewPrometheus(promreg)
+	output := slo.NewPrometheus(promreg, logger.WithField("slo-output", "prometheus"))
 
 	// Create handler.
 	handler := NewHandler(output, retriever, logger)

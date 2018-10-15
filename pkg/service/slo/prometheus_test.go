@@ -11,6 +11,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	measurev1alpha1 "github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1"
+	"github.com/slok/service-level-operator/pkg/log"
 	"github.com/slok/service-level-operator/pkg/service/sli"
 	"github.com/slok/service-level-operator/pkg/service/slo"
 )
@@ -29,14 +30,35 @@ var (
 	slo00 = &measurev1alpha1.SLO{
 		Name:                         "slo00-test",
 		AvailabilityObjectivePercent: 99.999,
+		Output: measurev1alpha1.Output{
+			Prometheus: &measurev1alpha1.PrometheusOutputSource{},
+		},
 	}
 	slo01 = &measurev1alpha1.SLO{
 		Name:                         "slo01-test",
 		AvailabilityObjectivePercent: 99.98,
+		Output: measurev1alpha1.Output{
+			Prometheus: &measurev1alpha1.PrometheusOutputSource{},
+		},
 	}
 	slo10 = &measurev1alpha1.SLO{
 		Name:                         "slo10-test",
 		AvailabilityObjectivePercent: 99.99978,
+		Output: measurev1alpha1.Output{
+			Prometheus: &measurev1alpha1.PrometheusOutputSource{},
+		},
+	}
+	slo11 = &measurev1alpha1.SLO{
+		Name:                         "slo11-test",
+		AvailabilityObjectivePercent: 95.9981,
+		Output: measurev1alpha1.Output{
+			Prometheus: &measurev1alpha1.PrometheusOutputSource{
+				Labels: map[string]string{
+					"env":  "test",
+					"team": "team1",
+				},
+			},
+		},
 	}
 )
 
@@ -78,7 +100,7 @@ func TestPrometheusOutput(t *testing.T) {
 				}
 			},
 			expMetrics: []string{
-				`service_level_slo_error_ratio_total{service_level="sl0-test",slo="slo00-test"} 2.1121375205563884`,
+				`service_level_slo_error_ratio_total{service_level="sl0-test",slo="slo00-test"} 2.112137520556389`,
 				`service_level_slo_full_ratio_total{service_level="sl0-test",slo="slo00-test"} 8`,
 				`service_level_slo_objective_ratio{service_level="sl0-test",slo="slo00-test"} 0.9999899999999999`,
 			},
@@ -102,6 +124,10 @@ func TestPrometheusOutput(t *testing.T) {
 					TotalQ: 3456,
 					ErrorQ: 3,
 				})
+				output.Create(sl1, slo11, &sli.Result{
+					TotalQ: 998,
+					ErrorQ: 7,
+				})
 			},
 			expMetrics: []string{
 				`service_level_slo_error_ratio_total{service_level="sl0-test",slo="slo00-test"} 0.000122`,
@@ -115,6 +141,10 @@ func TestPrometheusOutput(t *testing.T) {
 				`service_level_slo_error_ratio_total{service_level="sl1-test",slo="slo10-test"} 0.0009766096154773965`,
 				`service_level_slo_full_ratio_total{service_level="sl1-test",slo="slo10-test"} 2`,
 				`service_level_slo_objective_ratio{service_level="sl1-test",slo="slo10-test"} 0.9999978`,
+
+				`service_level_slo_error_ratio_total{env="test",service_level="sl1-test",slo="slo11-test",team="team1"} 0.0070140280561122245`,
+				`service_level_slo_full_ratio_total{env="test",service_level="sl1-test",slo="slo11-test",team="team1"} 1`,
+				`service_level_slo_objective_ratio{env="test",service_level="sl1-test",slo="slo11-test",team="team1"} 0.959981`,
 			},
 		},
 	}
@@ -124,7 +154,7 @@ func TestPrometheusOutput(t *testing.T) {
 			assert := assert.New(t)
 			promReg := prometheus.NewRegistry()
 
-			output := slo.NewPrometheus(promReg)
+			output := slo.NewPrometheus(promReg, log.Dummy)
 			test.createResults(output)
 
 			// Check metrics
