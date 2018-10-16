@@ -47,11 +47,11 @@ func (s *serviceLevelCRD) GetListerWatcher() cache.ListerWatcher {
 	return &cache.ListWatch{
 		ListFunc: func(options metav1.ListOptions) (runtime.Object, error) {
 			options.LabelSelector = s.cfg.LabelSelector
-			return s.service.ListServiceLevels("", options)
+			return s.service.ListServiceLevels(s.cfg.Namespace, options)
 		},
 		WatchFunc: func(options metav1.ListOptions) (watch.Interface, error) {
 			options.LabelSelector = s.cfg.LabelSelector
-			return s.service.WatchServiceLevels("", options)
+			return s.service.WatchServiceLevels(s.cfg.Namespace, options)
 		},
 	}
 }

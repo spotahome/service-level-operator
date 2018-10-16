@@ -26,8 +26,10 @@ type Config struct {
 	ResyncPeriod time.Duration
 	// ConcurretWorkers are number of workers to handle the events.
 	ConcurretWorkers int
-	// The label selector for the Kubernetes resources.
+	// LabelSelector is the label selector to filter Kubernetes resources by labels.
 	LabelSelector string
+	// Namespace is the namespace to filter Kubernetes resources by a single namespace.
+	Namespace string
 }
 
 // New returns pod terminator operator.
