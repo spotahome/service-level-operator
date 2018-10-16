@@ -19,12 +19,14 @@ import (
 var (
 	sl0 = &measurev1alpha1.ServiceLevel{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: "sl0-test",
+			Name:      "sl0-test",
+			Namespace: "ns0",
 		},
 	}
 	sl1 = &measurev1alpha1.ServiceLevel{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: "sl1-test",
+			Name:      "sl1-test",
+			Namespace: "ns1",
 		},
 	}
 	slo00 = &measurev1alpha1.SLO{
@@ -77,9 +79,9 @@ func TestPrometheusOutput(t *testing.T) {
 				})
 			},
 			expMetrics: []string{
-				`service_level_slo_error_ratio_total{service_level="sl0-test",slo="slo00-test"} 0.000122`,
-				`service_level_slo_full_ratio_total{service_level="sl0-test",slo="slo00-test"} 1`,
-				`service_level_slo_objective_ratio{service_level="sl0-test",slo="slo00-test"} 0.9999899999999999`,
+				`service_level_slo_error_ratio_total{namespace="ns0",service_level="sl0-test",slo="slo00-test"} 0.000122`,
+				`service_level_slo_full_ratio_total{namespace="ns0",service_level="sl0-test",slo="slo00-test"} 1`,
+				`service_level_slo_objective_ratio{namespace="ns0",service_level="sl0-test",slo="slo00-test"} 0.9999899999999999`,
 			},
 		},
 		{
@@ -100,9 +102,9 @@ func TestPrometheusOutput(t *testing.T) {
 				}
 			},
 			expMetrics: []string{
-				`service_level_slo_error_ratio_total{service_level="sl0-test",slo="slo00-test"} 2.112137520556389`,
-				`service_level_slo_full_ratio_total{service_level="sl0-test",slo="slo00-test"} 8`,
-				`service_level_slo_objective_ratio{service_level="sl0-test",slo="slo00-test"} 0.9999899999999999`,
+				`service_level_slo_error_ratio_total{namespace="ns0",service_level="sl0-test",slo="slo00-test"} 2.112137520556389`,
+				`service_level_slo_full_ratio_total{namespace="ns0",service_level="sl0-test",slo="slo00-test"} 8`,
+				`service_level_slo_objective_ratio{namespace="ns0",service_level="sl0-test",slo="slo00-test"} 0.9999899999999999`,
 			},
 		},
 		{
@@ -130,21 +132,21 @@ func TestPrometheusOutput(t *testing.T) {
 				})
 			},
 			expMetrics: []string{
-				`service_level_slo_error_ratio_total{service_level="sl0-test",slo="slo00-test"} 0.000122`,
-				`service_level_slo_full_ratio_total{service_level="sl0-test",slo="slo00-test"} 1`,
-				`service_level_slo_objective_ratio{service_level="sl0-test",slo="slo00-test"} 0.9999899999999999`,
+				`service_level_slo_error_ratio_total{namespace="ns0",service_level="sl0-test",slo="slo00-test"} 0.000122`,
+				`service_level_slo_full_ratio_total{namespace="ns0",service_level="sl0-test",slo="slo00-test"} 1`,
+				`service_level_slo_objective_ratio{namespace="ns0",service_level="sl0-test",slo="slo00-test"} 0.9999899999999999`,
 
-				`service_level_slo_error_ratio_total{service_level="sl0-test",slo="slo01-test"} 0.3363006923837784`,
-				`service_level_slo_full_ratio_total{service_level="sl0-test",slo="slo01-test"} 1`,
-				`service_level_slo_objective_ratio{service_level="sl0-test",slo="slo01-test"} 0.9998`,
+				`service_level_slo_error_ratio_total{namespace="ns0",service_level="sl0-test",slo="slo01-test"} 0.3363006923837784`,
+				`service_level_slo_full_ratio_total{namespace="ns0",service_level="sl0-test",slo="slo01-test"} 1`,
+				`service_level_slo_objective_ratio{namespace="ns0",service_level="sl0-test",slo="slo01-test"} 0.9998`,
 
-				`service_level_slo_error_ratio_total{service_level="sl1-test",slo="slo10-test"} 0.0009766096154773965`,
-				`service_level_slo_full_ratio_total{service_level="sl1-test",slo="slo10-test"} 2`,
-				`service_level_slo_objective_ratio{service_level="sl1-test",slo="slo10-test"} 0.9999978`,
+				`service_level_slo_error_ratio_total{namespace="ns1",service_level="sl1-test",slo="slo10-test"} 0.0009766096154773965`,
+				`service_level_slo_full_ratio_total{namespace="ns1",service_level="sl1-test",slo="slo10-test"} 2`,
+				`service_level_slo_objective_ratio{namespace="ns1",service_level="sl1-test",slo="slo10-test"} 0.9999978`,
 
-				`service_level_slo_error_ratio_total{env="test",service_level="sl1-test",slo="slo11-test",team="team1"} 0.0070140280561122245`,
-				`service_level_slo_full_ratio_total{env="test",service_level="sl1-test",slo="slo11-test",team="team1"} 1`,
-				`service_level_slo_objective_ratio{env="test",service_level="sl1-test",slo="slo11-test",team="team1"} 0.959981`,
+				`service_level_slo_error_ratio_total{env="test",namespace="ns1",service_level="sl1-test",slo="slo11-test",team="team1"} 0.0070140280561122245`,
+				`service_level_slo_full_ratio_total{env="test",namespace="ns1",service_level="sl1-test",slo="slo11-test",team="team1"} 1`,
+				`service_level_slo_objective_ratio{env="test",namespace="ns1",service_level="sl1-test",slo="slo11-test",team="team1"} 0.959981`,
 			},
 		},
 	}

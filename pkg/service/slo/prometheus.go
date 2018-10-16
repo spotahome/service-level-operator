@@ -110,6 +110,7 @@ func (p *prometheusOutput) Collect(ch chan<- prometheus.Metric) {
 			continue
 		}
 
+		ns := metric.serviceLevel.Namespace
 		slName := metric.serviceLevel.Name
 		sloName := metric.slo.Name
 		var labels map[string]string
@@ -118,9 +119,9 @@ func (p *prometheusOutput) Collect(ch chan<- prometheus.Metric) {
 			labels = metric.slo.Output.Prometheus.Labels
 		}
 
-		ch <- p.getSLOErrorMetric(slName, sloName, labels, metric.errorSum)
-		ch <- p.getSLOFullMetric(slName, sloName, labels, metric.totalSum)
-		ch <- p.getSLOObjectiveMetric(slName, sloName, labels, metric.objective)
+		ch <- p.getSLOErrorMetric(ns, slName, sloName, labels, metric.errorSum)
+		ch <- p.getSLOFullMetric(ns, slName, sloName, labels, metric.totalSum)
+		ch <- p.getSLOObjectiveMetric(ns, slName, sloName, labels, metric.objective)
 
 		// Mark as sent.
 		metric.dirty = false
@@ -130,44 +131,44 @@ func (p *prometheusOutput) Collect(ch chan<- prometheus.Metric) {
 	p.logger.Debugf("finished collecting all SLOs")
 }
 
-func (p *prometheusOutput) getSLOErrorMetric(serviceLevel, slo string, constLabels prometheus.Labels, value float64) prometheus.Metric {
+func (p *prometheusOutput) getSLOErrorMetric(ns, serviceLevel, slo string, constLabels prometheus.Labels, value float64) prometheus.Metric {
 	return prometheus.MustNewConstMetric(
 		prometheus.NewDesc(
 			prometheus.BuildFQName(promNS, promSubsystem, "error_ratio_total"),
 			"Is the total error ratio counter for SLOs.",
-			[]string{"service_level", "slo"},
+			[]string{"namespace", "service_level", "slo"},
 			constLabels,
 		),
 		prometheus.CounterValue,
 		value,
-		serviceLevel, slo,
+		ns, serviceLevel, slo,
 	)
 }
 
-func (p *prometheusOutput) getSLOFullMetric(serviceLevel, slo string, constLabels prometheus.Labels, value float64) prometheus.Metric {
+func (p *prometheusOutput) getSLOFullMetric(ns, serviceLevel, slo string, constLabels prometheus.Labels, value float64) prometheus.Metric {
 	return prometheus.MustNewConstMetric(
 		prometheus.NewDesc(
 			prometheus.BuildFQName(promNS, promSubsystem, "full_ratio_total"),
 			"Is the full SLOs ratio counter in time.",
-			[]string{"service_level", "slo"},
+			[]string{"namespace", "service_level", "slo"},
 			constLabels,
 		),
 		prometheus.CounterValue,
 		value,
-		serviceLevel, slo,
+		ns, serviceLevel, slo,
 	)
 }
 
-func (p *prometheusOutput) getSLOObjectiveMetric(serviceLevel, slo string, constLabels prometheus.Labels, value float64) prometheus.Metric {
+func (p *prometheusOutput) getSLOObjectiveMetric(ns, serviceLevel, slo string, constLabels prometheus.Labels, value float64) prometheus.Metric {
 	return prometheus.MustNewConstMetric(
 		prometheus.NewDesc(
 			prometheus.BuildFQName(promNS, promSubsystem, "objective_ratio"),
 			"Is the objective of the SLO in ratio unit.",
-			[]string{"service_level", "slo"},
+			[]string{"namespace", "service_level", "slo"},
 			constLabels,
 		),
 		prometheus.GaugeValue,
 		value,
-		serviceLevel, slo,
+		ns, serviceLevel, slo,
 	)
 }
