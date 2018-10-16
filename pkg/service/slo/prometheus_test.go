@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -66,9 +67,11 @@ var (
 
 func TestPrometheusOutput(t *testing.T) {
 	tests := []struct {
-		name          string
-		createResults func(output slo.Output)
-		expMetrics    []string
+		name              string
+		cfg               slo.PrometheusCfg
+		createResults     func(output slo.Output)
+		expMetrics        []string
+		expMissingMetrics []string
 	}{
 		{
 			name: "Creating a output result should expose all the required metrics",
@@ -79,6 +82,24 @@ func TestPrometheusOutput(t *testing.T) {
 				})
 			},
 			expMetrics: []string{
+				`service_level_slo_error_ratio_total{namespace="ns0",service_level="sl0-test",slo="slo00-test"} 0.000122`,
+				`service_level_slo_full_ratio_total{namespace="ns0",service_level="sl0-test",slo="slo00-test"} 1`,
+				`service_level_slo_objective_ratio{namespace="ns0",service_level="sl0-test",slo="slo00-test"} 0.9999899999999999`,
+			},
+		},
+		{
+			name: "Expired metrics shouldn't be exposed",
+			cfg: slo.PrometheusCfg{
+				ExpireDuration: 500 * time.Microsecond,
+			},
+			createResults: func(output slo.Output) {
+				output.Create(sl0, slo00, &sli.Result{
+					TotalQ: 1000000,
+					ErrorQ: 122,
+				})
+				time.Sleep(1 * time.Millisecond)
+			},
+			expMissingMetrics: []string{
 				`service_level_slo_error_ratio_total{namespace="ns0",service_level="sl0-test",slo="slo00-test"} 0.000122`,
 				`service_level_slo_full_ratio_total{namespace="ns0",service_level="sl0-test",slo="slo00-test"} 1`,
 				`service_level_slo_objective_ratio{namespace="ns0",service_level="sl0-test",slo="slo00-test"} 0.9999899999999999`,
@@ -156,7 +177,7 @@ func TestPrometheusOutput(t *testing.T) {
 			assert := assert.New(t)
 			promReg := prometheus.NewRegistry()
 
-			output := slo.NewPrometheus(promReg, log.Dummy)
+			output := slo.NewPrometheus(test.cfg, promReg, log.Dummy)
 			test.createResults(output)
 
 			// Check metrics
@@ -169,7 +190,9 @@ func TestPrometheusOutput(t *testing.T) {
 			for _, expMetric := range test.expMetrics {
 				assert.Contains(string(metrics), expMetric)
 			}
-
+			for _, expMissingMetric := range test.expMissingMetrics {
+				assert.NotContains(string(metrics), expMissingMetric)
+			}
 		})
 	}
 }

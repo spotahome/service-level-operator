@@ -3,6 +3,7 @@ package slo
 import (
 	"fmt"
 	"sync"
+	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
 
@@ -12,8 +13,9 @@ import (
 )
 
 const (
-	promNS        = "service_level"
-	promSubsystem = "slo"
+	promNS            = "service_level"
+	promSubsystem     = "slo"
+	defExpireDuration = 90 * time.Second
 )
 
 // metricValue is an internal type to store the counters
@@ -25,7 +27,20 @@ type metricValue struct {
 	errorSum     float64
 	totalSum     float64
 	objective    float64
-	dirty        bool // this flag is used to track if was already ingested by prometheus.
+	expire       time.Time // expire is the time where this metric will expire unless it's refreshed.
+}
+
+// PrometheusCfg is the configuration of the Prometheus Output.
+type PrometheusCfg struct {
+	// ExpireDuration is the time a metric will expire if is not refreshed.
+	ExpireDuration time.Duration
+}
+
+// Validate will validate the cfg setting safe defaults.
+func (p *PrometheusCfg) Validate() {
+	if p.ExpireDuration == 0 {
+		p.ExpireDuration = defExpireDuration
+	}
 }
 
 // Prometheus knows how to set the output of the SLO on a Prometheus backend.
@@ -43,6 +58,7 @@ type metricValue struct {
 // process is called. This is made by storing the internal counters and
 // generating the metrics when the collect process is callend on each scrape.
 type prometheusOutput struct {
+	cfg            PrometheusCfg
 	metricValuesMu sync.Mutex
 	metricValues   map[string]*metricValue
 	reg            prometheus.Registerer
@@ -50,8 +66,11 @@ type prometheusOutput struct {
 }
 
 // NewPrometheus returns a new Prometheus output.
-func NewPrometheus(reg prometheus.Registerer, logger log.Logger) Output {
+func NewPrometheus(cfg PrometheusCfg, reg prometheus.Registerer, logger log.Logger) Output {
+	cfg.Validate()
+
 	p := &prometheusOutput{
+		cfg:          cfg,
 		metricValues: map[string]*metricValue{},
 		reg:          reg,
 		logger:       logger,
@@ -83,11 +102,12 @@ func (p *prometheusOutput) Create(serviceLevel *measurev1alpha1.ServiceLevel, sl
 	metric := p.metricValues[sloID]
 	metric.serviceLevel = serviceLevel
 	metric.slo = slo
-	metric.dirty = true
 	metric.errorSum += errRat
 	metric.totalSum++
-	// Objective is in %  so we convert to ratio (0-1)
+	// Objective is in %  so we convert to ratio (0-1).
 	metric.objective = slo.AvailabilityObjectivePercent / 100
+	// Refresh the metric expiration.
+	metric.expire = time.Now().Add(p.cfg.ExpireDuration)
 
 	return nil
 }
@@ -101,12 +121,13 @@ func (p *prometheusOutput) Collect(ch chan<- prometheus.Metric) {
 	defer p.metricValuesMu.Unlock()
 	p.logger.Debugf("start collecting all SLOs")
 
-	for _, metric := range p.metricValues {
+	for id, metric := range p.metricValues {
 		metric := metric
 
-		// If metric didn't change then we don't need to measure.
-		// TODO: clean old metrics from the value map.
-		if !metric.dirty {
+		// If metric has expired then remove from the map.
+		if time.Now().After(metric.expire) {
+			p.logger.With("slo", metric.slo.Name).With("sl", metric.serviceLevel.Name).Debugf("metric expired, removing")
+			delete(p.metricValues, id)
 			continue
 		}
 
@@ -122,9 +143,6 @@ func (p *prometheusOutput) Collect(ch chan<- prometheus.Metric) {
 		ch <- p.getSLOErrorMetric(ns, slName, sloName, labels, metric.errorSum)
 		ch <- p.getSLOFullMetric(ns, slName, sloName, labels, metric.totalSum)
 		ch <- p.getSLOObjectiveMetric(ns, slName, sloName, labels, metric.objective)
-
-		// Mark as sent.
-		metric.dirty = false
 	}
 
 	// Collect all SLOs metric.

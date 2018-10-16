@@ -1,7 +1,7 @@
 package slo
 
 import (
-	"errors"
+	"fmt"
 
 	measurev1alpha1 "github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1"
 )
@@ -32,7 +32,7 @@ func (o outputFactory) GetStrategy(s *measurev1alpha1.SLO) (Output, error) {
 		return o.promOutput, nil
 	}
 
-	return nil, errors.New("unsupported output kind")
+	return nil, fmt.Errorf("%s unsupported output kind", s.Name)
 }
 
 // MockOutputFactory returns the mocked output strategy.
