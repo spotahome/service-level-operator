@@ -13,13 +13,15 @@ import (
 
 // serviceLevelCRD is the crd release.
 type serviceLevelCRD struct {
+	cfg     Config
 	service kubernetes.Service
 	logger  log.Logger
 }
 
-func newServiceLevelCRD(service kubernetes.Service, logger log.Logger) *serviceLevelCRD {
+func newServiceLevelCRD(cfg Config, service kubernetes.Service, logger log.Logger) *serviceLevelCRD {
 	logger = logger.With("crd", "servicelevel")
 	return &serviceLevelCRD{
+		cfg:     cfg,
 		service: service,
 		logger:  logger,
 	}
@@ -44,9 +46,11 @@ func (s *serviceLevelCRD) Initialize() error {
 func (s *serviceLevelCRD) GetListerWatcher() cache.ListerWatcher {
 	return &cache.ListWatch{
 		ListFunc: func(options metav1.ListOptions) (runtime.Object, error) {
+			options.LabelSelector = s.cfg.LabelSelector
 			return s.service.ListServiceLevels("", options)
 		},
 		WatchFunc: func(options metav1.ListOptions) (watch.Interface, error) {
+			options.LabelSelector = s.cfg.LabelSelector
 			return s.service.WatchServiceLevels("", options)
 		},
 	}

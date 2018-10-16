@@ -49,7 +49,10 @@ var (
 		&measurev1alpha1.ServiceLevel{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      "fake-service0",
-				Namespace: "fake",
+				Namespace: "ns0",
+				Labels: map[string]string{
+					"wrong": "false",
+				},
 			},
 			Spec: measurev1alpha1.ServiceLevelSpec{
 				ServiceLevelObjectives: []measurev1alpha1.SLO{
@@ -125,7 +128,10 @@ var (
 		&measurev1alpha1.ServiceLevel{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      "fake-service1",
-				Namespace: "fake",
+				Namespace: "ns1",
+				Labels: map[string]string{
+					"wrong": "false",
+				},
 			},
 			Spec: measurev1alpha1.ServiceLevelSpec{
 				ServiceLevelObjectives: []measurev1alpha1.SLO{
@@ -156,8 +162,11 @@ var (
 		},
 		&measurev1alpha1.ServiceLevel{
 			ObjectMeta: metav1.ObjectMeta{
-				Name:      "fake-service3-no-output",
-				Namespace: "fake",
+				Name:      "fake-service2-no-output",
+				Namespace: "ns0",
+				Labels: map[string]string{
+					"wrong": "true",
+				},
 			},
 			Spec: measurev1alpha1.ServiceLevelSpec{
 				ServiceLevelObjectives: []measurev1alpha1.SLO{
@@ -182,8 +191,11 @@ var (
 
 		&measurev1alpha1.ServiceLevel{
 			ObjectMeta: metav1.ObjectMeta{
-				Name:      "fake-service4-no-input",
-				Namespace: "fake",
+				Name:      "fake-service3-no-input",
+				Namespace: "ns1",
+				Labels: map[string]string{
+					"wrong": "true",
+				},
 			},
 			Spec: measurev1alpha1.ServiceLevelSpec{
 				ServiceLevelObjectives: []measurev1alpha1.SLO{

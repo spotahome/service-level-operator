@@ -26,13 +26,15 @@ type Config struct {
 	ResyncPeriod time.Duration
 	// ConcurretWorkers are number of workers to handle the events.
 	ConcurretWorkers int
+	// The label selector for the Kubernetes resources.
+	LabelSelector string
 }
 
 // New returns pod terminator operator.
 func New(cfg Config, promreg *prometheus.Registry, promCliFactory promcli.ClientFactory, k8ssvc kubernetes.Service, logger log.Logger) (operator.Operator, error) {
 
 	// Create crd.
-	ptCRD := newServiceLevelCRD(k8ssvc, logger)
+	ptCRD := newServiceLevelCRD(cfg, k8ssvc, logger)
 
 	// Create services.
 	retrieverFact := sli.NewRetrieverFactory(

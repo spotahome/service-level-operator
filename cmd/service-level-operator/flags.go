@@ -27,6 +27,7 @@ type cmdFlags struct {
 	workers         int
 	healthCheckAddr string
 	listenAddress   string
+	labelSelector   string
 	debug           bool
 	development     bool
 	fake            bool
@@ -48,6 +49,7 @@ func (c *cmdFlags) init() {
 	c.fs.StringVar(&c.kubeConfig, "kubeconfig", kubehome, "kubernetes configuration path, only used when development mode enabled")
 	c.fs.StringVar(&c.healthCheckAddr, "healthcheck-addr", defHealthCheckAddress, "the address the readiness and liveness healthchecks will be listening")
 	c.fs.StringVar(&c.listenAddress, "listen-addr", defListenAddress, "the address where the metrics will be exposed")
+	c.fs.StringVar(&c.labelSelector, "selector", "", "selector (label query) to filter on, supports '=', '==', and '!='.(e.g. -l key1=value1,key2=value2)")
 	c.fs.IntVar(&c.resyncSeconds, "resync-seconds", defResyncSeconds, "the number of seconds for the SLO calculation interval")
 	c.fs.IntVar(&c.workers, "workers", defWorkers, "the number of concurrent workers per controller handling events")
 	c.fs.BoolVar(&c.development, "development", false, "development flag will allow to run the operator outside a kubernetes cluster")
@@ -62,5 +64,6 @@ func (c *cmdFlags) toOperatorConfig() operator.Config {
 	return operator.Config{
 		ResyncPeriod:     time.Duration(c.resyncSeconds) * time.Second,
 		ConcurretWorkers: c.workers,
+		LabelSelector:    c.labelSelector,
 	}
 }
