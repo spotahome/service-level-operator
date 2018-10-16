@@ -48,7 +48,7 @@ func (c *cmdFlags) init() {
 	c.fs.StringVar(&c.kubeConfig, "kubeconfig", kubehome, "kubernetes configuration path, only used when development mode enabled")
 	c.fs.StringVar(&c.healthCheckAddr, "healthcheck-addr", defHealthCheckAddress, "the address the readiness and liveness healthchecks will be listening")
 	c.fs.StringVar(&c.listenAddress, "listen-addr", defListenAddress, "the address where the metrics will be exposed")
-	c.fs.IntVar(&c.resyncSeconds, "resync-seconds", defResyncSeconds, "the number of seconds to resync the controllers")
+	c.fs.IntVar(&c.resyncSeconds, "resync-seconds", defResyncSeconds, "the number of seconds for the SLO calculation interval")
 	c.fs.IntVar(&c.workers, "workers", defWorkers, "the number of concurrent workers per controller handling events")
 	c.fs.BoolVar(&c.development, "development", false, "development flag will allow to run the operator outside a kubernetes cluster")
 	c.fs.BoolVar(&c.debug, "debug", false, "enable debug mode")
