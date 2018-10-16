@@ -14,6 +14,7 @@ import (
 	"github.com/slok/service-level-operator/pkg/log"
 	"github.com/slok/service-level-operator/pkg/operator"
 	"github.com/slok/service-level-operator/pkg/service/sli"
+	"github.com/slok/service-level-operator/pkg/service/slo"
 )
 
 var (
@@ -90,14 +91,18 @@ func TestHandler(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			assert := assert.New(t)
 
+			// Mocks.
 			mout := &mslo.Output{}
+			moutf := slo.MockOutputFactory{Mock: mout}
 			mret := &msli.Retriever{}
+			mretf := sli.MockRetrieverFactory{Mock: mret}
+
 			if test.processTimes > 0 {
 				mout.On("Create", mock.Anything, mock.Anything, mock.Anything).Times(test.processTimes).Return(nil)
 				mret.On("Retrieve", mock.Anything).Times(test.processTimes).Return(sli.Result{}, nil)
 			}
 
-			h := operator.NewHandler(mout, mret, log.Dummy)
+			h := operator.NewHandler(moutf, mretf, log.Dummy)
 			err := h.Add(context.Background(), test.serviceLevel)
 
 			if test.expErr {

@@ -14,17 +14,17 @@ import (
 
 // Handler is the Operator handler.
 type Handler struct {
-	outputer  slo.Output
-	retriever sli.Retriever
-	logger    log.Logger
+	outputerFact  slo.OutputFactory
+	retrieverFact sli.RetrieverFactory
+	logger        log.Logger
 }
 
 // NewHandler returns a new project handler
-func NewHandler(output slo.Output, retriever sli.Retriever, logger log.Logger) *Handler {
+func NewHandler(outputerFact slo.OutputFactory, retrieverFact sli.RetrieverFactory, logger log.Logger) *Handler {
 	return &Handler{
-		outputer:  output,
-		retriever: retriever,
-		logger:    logger,
+		outputerFact:  outputerFact,
+		retrieverFact: retrieverFact,
+		logger:        logger,
 	}
 }
 
@@ -56,12 +56,23 @@ func (h *Handler) processSLO(sl *measurev1alpha1.ServiceLevel, slo *measurev1alp
 		h.logger.Debugf("ignoring SLO %s", slo.Name)
 		return nil
 	}
-	res, err := h.retriever.Retrieve(&slo.ServiceLevelIndicator)
+
+	retriever, err := h.retrieverFact.GetStrategy(&slo.ServiceLevelIndicator)
 	if err != nil {
 		return err
 	}
 
-	err = h.outputer.Create(sl, slo, &res)
+	res, err := retriever.Retrieve(&slo.ServiceLevelIndicator)
+	if err != nil {
+		return err
+	}
+
+	outputer, err := h.outputerFact.GetStrategy(slo)
+	if err != nil {
+		return err
+	}
+
+	err = outputer.Create(sl, slo, &res)
 	if err != nil {
 		return err
 	}

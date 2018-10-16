@@ -35,11 +35,13 @@ func New(cfg Config, promreg *prometheus.Registry, promCliFactory promcli.Client
 	ptCRD := newServiceLevelCRD(k8ssvc, logger)
 
 	// Create services.
-	retriever := sli.NewPrometheus(promCliFactory, logger)
-	output := slo.NewPrometheus(promreg, logger.WithField("slo-output", "prometheus"))
+	retrieverFact := sli.NewRetrieverFactory(
+		sli.NewPrometheus(promCliFactory, logger.WithField("sli-retriever", "prometheus")))
+	outputFact := slo.NewOutputFactory(
+		slo.NewPrometheus(promreg, logger.WithField("slo-output", "prometheus")))
 
 	// Create handler.
-	handler := NewHandler(output, retriever, logger)
+	handler := NewHandler(outputFact, retrieverFact, logger)
 
 	// Create controller.
 	ctrlCfg := &controller.Config{

@@ -156,10 +156,52 @@ var (
 		},
 		&measurev1alpha1.ServiceLevel{
 			ObjectMeta: metav1.ObjectMeta{
-				Name:      "fake-service2",
+				Name:      "fake-service3-no-output",
 				Namespace: "fake",
 			},
-			Spec: measurev1alpha1.ServiceLevelSpec{},
+			Spec: measurev1alpha1.ServiceLevelSpec{
+				ServiceLevelObjectives: []measurev1alpha1.SLO{
+					{
+						Name:                         "fake_slo4",
+						Description:                  "fake slo 4.",
+						AvailabilityObjectivePercent: 99,
+						ServiceLevelIndicator: measurev1alpha1.SLI{
+							SLISource: measurev1alpha1.SLISource{
+								Prometheus: &measurev1alpha1.PrometheusSLISource{
+									Address:    "http://fake:9090",
+									TotalQuery: `slo3_total`,
+									ErrorQuery: `slo3_error`,
+								},
+							},
+						},
+						Output: measurev1alpha1.Output{},
+					},
+				},
+			},
+		},
+
+		&measurev1alpha1.ServiceLevel{
+			ObjectMeta: metav1.ObjectMeta{
+				Name:      "fake-service4-no-input",
+				Namespace: "fake",
+			},
+			Spec: measurev1alpha1.ServiceLevelSpec{
+				ServiceLevelObjectives: []measurev1alpha1.SLO{
+					{
+						Name:                         "fake_slo5",
+						Description:                  "fake slo 5.",
+						AvailabilityObjectivePercent: 99,
+						ServiceLevelIndicator:        measurev1alpha1.SLI{},
+						Output: measurev1alpha1.Output{
+							Prometheus: &measurev1alpha1.PrometheusOutputSource{
+								Labels: map[string]string{
+									"wrong": "true",
+								},
+							},
+						},
+					},
+				},
+			},
 		},
 	}
 
