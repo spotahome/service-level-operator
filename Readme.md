@@ -26,14 +26,18 @@ spec:
           address: http://myprometheus:9090
           totalQuery: sum(increase(http_request_total{host="awesome_service_io"}[2m]))
           errorQuery: sum(increase(http_request_total{host="awesome_service_io", code=~"5.."}[2m]))
-      output: prometheus:
+      output:
+        prometheus:
+          labels:
+            team: a-team
+            iteration: "3"
 ```
 
-The operator will query and create new metrics based on the SLOs caulculations at regular intervals.
+The operator will query and create new metrics based on the SLOs caulculations at regular intervals (see `--resync-seconds` flag).
 
 The approach that has been taken to generate the SLO metrics is based on [how Google uses and manages SLIs, SLOs and error budgets][sre-book-slo]
 
-In the manifest the SLI is:
+In the manifest the SLI is made of 2 prometheus metrics:
 
 - The total of requests: `sum(increase(http_request_total{host="awesome_service_io"}[2m]))`
 - The total number of failed requests: `sum(increase(http_request_total{host="awesome_service_io", code=~"5.."}[2m]))`
@@ -54,11 +58,17 @@ service_level_slo_full_ratio_total{service_level="awesome-service",slo="9999_htt
 service_level_slo_objective_ratio{service_level="awesome-service",slo="9999_http_request_lt_500"} 0.9998999999999999
 ```
 
+Like is seen in the above output the operator generates 3 metrics:
+
+- `service_level_slo_error_ratio_total`: The _downtime/error_ ratio of the service.
+- `service_level_slo_full_ratio_total`: The total ratio if the service, in other words what would be the ratio if the service would be 100% correct all the time.
+- `service_level_slo_objective_ratio`: The objective of the SLO in ratio.
+
 Every metric is based on ratios (0-1).
 
 With this metrics we can build availability graphs based on % and error budget burns.
 
-**Is important to note that like every metrics this is not exact and is a aproximation**
+**Is important to note that like every metrics this is not exact and is a aproximation (good one but an approximation after all)**
 
 ## Querie examples
 
