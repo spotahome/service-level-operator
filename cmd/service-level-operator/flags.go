@@ -13,25 +13,25 @@ import (
 
 // defaults
 const (
-	defHealthCheckAddress = ":8081"
-	defListenAddress      = ":8080"
-	defResyncSeconds      = 5
-	defWorkers            = 10
+	defMetricsPath   = "/metrics"
+	defListenAddress = ":8080"
+	defResyncSeconds = 5
+	defWorkers       = 10
 )
 
 type cmdFlags struct {
 	fs *flag.FlagSet
 
-	kubeConfig      string
-	resyncSeconds   int
-	workers         int
-	healthCheckAddr string
-	listenAddress   string
-	labelSelector   string
-	namespace       string
-	debug           bool
-	development     bool
-	fake            bool
+	kubeConfig    string
+	resyncSeconds int
+	workers       int
+	metricsPath   string
+	listenAddress string
+	labelSelector string
+	namespace     string
+	debug         bool
+	development   bool
+	fake          bool
 }
 
 func newCmdFlags() *cmdFlags {
@@ -48,7 +48,7 @@ func (c *cmdFlags) init() {
 	kubehome := filepath.Join(homedir.HomeDir(), ".kube", "config")
 	// register flags
 	c.fs.StringVar(&c.kubeConfig, "kubeconfig", kubehome, "kubernetes configuration path, only used when development mode enabled")
-	c.fs.StringVar(&c.healthCheckAddr, "healthcheck-addr", defHealthCheckAddress, "the address the readiness and liveness healthchecks will be listening")
+	c.fs.StringVar(&c.metricsPath, "metrics-path", defMetricsPath, "the path where the metrics will be served")
 	c.fs.StringVar(&c.listenAddress, "listen-addr", defListenAddress, "the address where the metrics will be exposed")
 	c.fs.StringVar(&c.labelSelector, "selector", "", "selector (label query) to filter on, supports '=', '==', and '!='.(e.g. -l key1=value1,key2=value2)")
 	c.fs.StringVar(&c.namespace, "namespace", "", "the namespace to filter on, by default all")

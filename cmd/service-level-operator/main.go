@@ -91,13 +91,7 @@ func (m *Main) Run() error {
 
 	// Metrics.
 	{
-		mux := http.NewServeMux()
-		mux.Handle("/metrics", promhttp.HandlerFor(promReg, promhttp.HandlerOpts{}))
-		s := http.Server{
-			Addr:    m.flags.listenAddress,
-			Handler: mux,
-		}
-
+		s := m.createHTTPServer(promReg)
 		g.Add(
 			func() error {
 				m.logger.Infof("metrics server listening on %s", m.flags.listenAddress)
@@ -202,6 +196,29 @@ func (m *Main) createPrometheusCliFactory() promclifactory.ClientFactory {
 	}
 
 	return promclifactory.NewFactory()
+}
+
+// createHTTPServer creates the http server that serves prometheus metrics and healthchecks.
+func (m *Main) createHTTPServer(promReg *prometheus.Registry) http.Server {
+	h := promhttp.HandlerFor(promReg, promhttp.HandlerOpts{})
+	mux := http.NewServeMux()
+	mux.Handle(m.flags.metricsPath, h)
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte(`<html>
+			<head><title>Service level operator</title></head>
+			<body>
+			<h1>Service level operator</h1>
+			<p><a href="` + m.flags.metricsPath + `">Metrics</a></p>
+			</body>
+			</html>`))
+	})
+	mux.HandleFunc("/healthz/ready", func(w http.ResponseWriter, r *http.Request) { w.Write([]byte(`ready`)) })
+	mux.HandleFunc("/healthz/live", func(w http.ResponseWriter, r *http.Request) { w.Write([]byte(`live`)) })
+
+	return http.Server{
+		Handler: mux,
+		Addr:    m.flags.listenAddress,
+	}
 }
 
 func main() {
