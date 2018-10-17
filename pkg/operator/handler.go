@@ -3,6 +3,7 @@ package operator
 import (
 	"context"
 	"fmt"
+	"sync"
 
 	"k8s.io/apimachinery/pkg/runtime"
 
@@ -38,16 +39,25 @@ func (h *Handler) Add(_ context.Context, obj runtime.Object) error {
 	slc := sl.DeepCopy()
 	// TODO Check the service level is correct.
 
+	var wg sync.WaitGroup
+	wg.Add(len(slc.Spec.ServiceLevelObjectives))
+
 	// Retrieve the SLIs.
-	// TODO: Concurrency and don't stop if one of the SLOs fails.
 	for _, slo := range slc.Spec.ServiceLevelObjectives {
 		slo := slo
-		err := h.processSLO(slc, &slo)
-		if err != nil {
-			return err
-		}
+
+		go func() {
+			defer wg.Done()
+			err := h.processSLO(slc, &slo)
+			// Don't stop if one of the SLOs errors, the rest should
+			// be processed independently.
+			if err != nil {
+				h.logger.With("sl", sl.Name).With("slo", slo.Name).Errorf("error processing SLO: %s", err)
+			}
+		}()
 	}
 
+	wg.Wait()
 	return nil
 }
 
