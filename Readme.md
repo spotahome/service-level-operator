@@ -4,9 +4,11 @@ Service level operator is a operator that based on CRDs creates Service level me
 
 This operator doesn't interact with Kubernetes except using the CRDs as a way to define application service levels and generating output metrics based on the CRD set metrics.
 
-Although this operator is though to interact with different backends, at this moment only uses prometheus as input and output.
+Although this operator is though to interact with different backends, at this moment only uses [Prometheus] as input and output.
 
 ## How does it work
+
+For this example the output and input backend will be [Prometheus].
 
 First you will need to define a CRD with your service SLOs. In this case we have a service that has an SLO on 99.99 availability, and the SLI is that 5xx are considered errors for this SLO.
 
@@ -70,6 +72,16 @@ With this metrics we can build availability graphs based on % and error budget b
 
 **Is important to note that like every metrics this is not exact and is a aproximation (good one but an approximation after all)**
 
+## Supported input/output backends
+
+### Input
+
+- [Prometheus]
+
+### Output
+
+- [Prometheus]
+
 ## Querie examples
 
 ## Availability level
@@ -123,3 +135,4 @@ So `(1 - service_level_slo_objective_ratio) * 43200 * increase(service_level_slo
 If we take that last part and divide for the total error budget we have for the month (`(1 - service_level_slo_objective_ratio) * 43200 * increase(service_level_slo_full_ratio_total[1m])`) this returns us a ratio of the error budget consumed. Multiply by 100 and we have the percent of error budget consumed after `${range}`.
 
 [sre-book-slo]: https://landing.google.com/sre/book/chapters/service-level-objectives.html
+[prometheus]: https://prometheus.io/
