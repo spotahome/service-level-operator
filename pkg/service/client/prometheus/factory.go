@@ -29,7 +29,7 @@ func NewFactory() ClientFactory {
 // GetV1APIClient satisfies ClientFactory interface.
 func (f *factory) GetV1APIClient(address string) (promv1.API, error) {
 	f.climu.Lock()
-	f.climu.Unlock()
+	defer f.climu.Unlock()
 
 	var err error
 	cli, ok := f.clis[address]

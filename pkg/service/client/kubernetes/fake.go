@@ -1,7 +1,6 @@
 package kubernetes
 
 import (
-	crdcli "github.com/slok/service-level-operator/pkg/k8sautogen/client/clientset/versioned"
 	apiextensionscli "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
 	apiextensionsclifake "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset/fake"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -12,6 +11,7 @@ import (
 	kubernetesfake "k8s.io/client-go/kubernetes/fake"
 
 	measurev1alpha1 "github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1"
+	crdcli "github.com/slok/service-level-operator/pkg/k8sautogen/client/clientset/versioned"
 	crdclifake "github.com/slok/service-level-operator/pkg/k8sautogen/client/clientset/versioned/fake"
 )
 
