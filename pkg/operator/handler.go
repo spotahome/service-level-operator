@@ -37,7 +37,11 @@ func (h *Handler) Add(_ context.Context, obj runtime.Object) error {
 	}
 
 	slc := sl.DeepCopy()
-	// TODO Check the service level is correct.
+
+	err := slc.Validate()
+	if err != nil {
+		return err
+	}
 
 	var wg sync.WaitGroup
 	wg.Add(len(slc.Spec.ServiceLevelObjectives))

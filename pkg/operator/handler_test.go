@@ -26,7 +26,9 @@ var (
 		Spec: measurev1alpha1.ServiceLevelSpec{
 			ServiceLevelObjectives: []measurev1alpha1.SLO{
 				{
-					Disable: true,
+					Name:                         "slo0",
+					AvailabilityObjectivePercent: 99.99,
+					Disable:                      true,
 					ServiceLevelIndicator: measurev1alpha1.SLI{
 						SLISource: measurev1alpha1.SLISource{
 							Prometheus: &measurev1alpha1.PrometheusSLISource{
@@ -35,6 +37,9 @@ var (
 								ErrorQuery: `sum(increase(skipper_serve_host_duration_seconds_count{host="www_spotahome_com", code=~"5.."}[5m]))`,
 							},
 						},
+					},
+					Output: measurev1alpha1.Output{
+						Prometheus: &measurev1alpha1.PrometheusOutputSource{},
 					},
 				},
 			},
@@ -49,17 +54,53 @@ var (
 		Spec: measurev1alpha1.ServiceLevelSpec{
 			ServiceLevelObjectives: []measurev1alpha1.SLO{
 				{
-					ServiceLevelIndicator: measurev1alpha1.SLI{},
+					Name:                         "slo0",
+					AvailabilityObjectivePercent: 99.95,
+					ServiceLevelIndicator: measurev1alpha1.SLI{
+						SLISource: measurev1alpha1.SLISource{
+							Prometheus: &measurev1alpha1.PrometheusSLISource{},
+						},
+					},
+					Output: measurev1alpha1.Output{
+						Prometheus: &measurev1alpha1.PrometheusOutputSource{},
+					},
 				},
 				{
-					ServiceLevelIndicator: measurev1alpha1.SLI{},
+					Name:                         "slo1",
+					AvailabilityObjectivePercent: 99.99,
+					ServiceLevelIndicator: measurev1alpha1.SLI{
+						SLISource: measurev1alpha1.SLISource{
+							Prometheus: &measurev1alpha1.PrometheusSLISource{},
+						},
+					},
+					Output: measurev1alpha1.Output{
+						Prometheus: &measurev1alpha1.PrometheusOutputSource{},
+					},
 				},
 				{
-					ServiceLevelIndicator: measurev1alpha1.SLI{},
+					Name:                         "slo2",
+					AvailabilityObjectivePercent: 99.9,
+					ServiceLevelIndicator: measurev1alpha1.SLI{
+						SLISource: measurev1alpha1.SLISource{
+							Prometheus: &measurev1alpha1.PrometheusSLISource{},
+						},
+					},
+					Output: measurev1alpha1.Output{
+						Prometheus: &measurev1alpha1.PrometheusOutputSource{},
+					},
 				},
 				{
-					Disable:               true,
-					ServiceLevelIndicator: measurev1alpha1.SLI{},
+					Name:                         "slo3",
+					AvailabilityObjectivePercent: 99.9999,
+					Disable:                      true,
+					ServiceLevelIndicator: measurev1alpha1.SLI{
+						SLISource: measurev1alpha1.SLISource{
+							Prometheus: &measurev1alpha1.PrometheusSLISource{},
+						},
+					},
+					Output: measurev1alpha1.Output{
+						Prometheus: &measurev1alpha1.PrometheusOutputSource{},
+					},
 				},
 			},
 		},
