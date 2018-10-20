@@ -38,6 +38,7 @@ DEBUG_CMD := go run ./cmd/service-level-operator/* --debug
 DEV_CMD := $(DEBUG_CMD) --development
 FAKE_CMD := $(DEV_CMD) --fake
 K8S_CODE_GEN_CMD := ./hack/scripts/k8scodegen.sh
+OPENAPI_CODE_GEN_CMD := ./hack/scripts/openapicodegen.sh
 DEPS_CMD := GO111MODULE=on go mod tidy && GO111MODULE=on go mod vendor
 K8S_VERSION := "1.10.7"
 SET_K8S_DEPS_CMD := GO111MODULE=on go mod edit \
@@ -91,6 +92,9 @@ set-k8s-deps:
 
 k8s-code-gen:
 	$(K8S_CODE_GEN_CMD)
+
+openapi-code-gen:
+	$(OPENAPI_CODE_GEN_CMD)
 
 # Test stuff in dev
 .PHONY: unit-test

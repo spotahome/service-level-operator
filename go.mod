@@ -2,7 +2,9 @@ module github.com/slok/service-level-operator
 
 require (
 	github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973 // indirect
+	github.com/emicklei/go-restful v2.8.0+incompatible // indirect
 	github.com/ghodss/yaml v1.0.0 // indirect
+	github.com/go-openapi/spec v0.17.0
 	github.com/gogo/protobuf v1.1.1 // indirect
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
 	github.com/golang/groupcache v0.0.0-20180924190550-6f2cf27854a4 // indirect
@@ -29,7 +31,6 @@ require (
 	github.com/stretchr/objx v0.1.1 // indirect
 	github.com/stretchr/testify v1.2.2
 	golang.org/x/crypto v0.0.0-20181001203147-e3636079e1a4 // indirect
-	golang.org/x/net v0.0.0-20181005035420-146acd28ed58 // indirect
 	golang.org/x/sync v0.0.0-20180314180146-1d60e4601c6f
 	golang.org/x/sys v0.0.0-20181005133103-4497e2df6f9e // indirect
 	golang.org/x/time v0.0.0-20180412165947-fbb02b2291d2 // indirect
@@ -38,6 +39,6 @@ require (
 	k8s.io/apiextensions-apiserver v0.0.0-20180820165011-f775fcd59f5c
 	k8s.io/apimachinery v0.0.0-20180619225948-e386b2658ed2
 	k8s.io/client-go v2.0.0-alpha.0.0.20180817174322-745ca8300397+incompatible
-	k8s.io/kube-openapi v0.0.0-20180928202339-9dfdf9be683f // indirect
+	k8s.io/kube-openapi v0.0.0-20180928202339-9dfdf9be683f
 	k8s.io/kubernetes v1.12.1 // indirect
 )
