@@ -21,7 +21,7 @@ func TestSLIResult(t *testing.T) {
 		{
 			name:            "Not having a total quantity should return everything ok.",
 			expAvailability: 1,
-			expError:        1,
+			expError:        0,
 		},
 		{
 			name:              "Having more errors than total should be impossible.",
