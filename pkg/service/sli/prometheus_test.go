@@ -94,6 +94,17 @@ func TestPrometheusRetrieve(t *testing.T) {
 			expErr:           true,
 		},
 		{
+			name:             "If the query returns 0 metrics it should treat as a 0 value.",
+			sli:              sli0,
+			totalQueryResult: vector2,
+			errorQueryResult: model.Vector{},
+			expErr:           false,
+			expResult: sli.Result{
+				TotalQ: 2,
+				ErrorQ: 0,
+			},
+		},
+		{
 			name:             "Quering prometheus for total and error metrics should return a correct result",
 			sli:              sli0,
 			totalQueryResult: vector100,

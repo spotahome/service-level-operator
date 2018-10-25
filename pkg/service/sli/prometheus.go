@@ -81,9 +81,14 @@ func (p *prometheus) getVectorMetric(ctx context.Context, cli promv1.API, query 
 	}
 	mtr := val.(model.Vector)
 
-	// We should have only one metric.
+	// If we obtain no metric then for us is 0.
+	if len(mtr) == 0 {
+		return 0, nil
+	}
+
+	// More than one metric should be an error.
 	if len(mtr) != 1 {
-		return 0, fmt.Errorf("wrong samples length, should be one, gor: %d", len(mtr))
+		return 0, fmt.Errorf("wrong samples length, should not be more than 1, got: %d", len(mtr))
 	}
 
 	return float64(mtr[0].Value), nil
