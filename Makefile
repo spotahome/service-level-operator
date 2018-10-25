@@ -40,7 +40,7 @@ FAKE_CMD := $(DEV_CMD) --fake
 K8S_CODE_GEN_CMD := ./hack/scripts/k8scodegen.sh
 OPENAPI_CODE_GEN_CMD := ./hack/scripts/openapicodegen.sh
 DEPS_CMD := GO111MODULE=on go mod tidy && GO111MODULE=on go mod vendor
-K8S_VERSION := "1.10.7"
+K8S_VERSION := "1.11.3"
 SET_K8S_DEPS_CMD := GO111MODULE=on go mod edit \
     -require=k8s.io/apiextensions-apiserver@kubernetes-${K8S_VERSION} \
 	-require=k8s.io/client-go@kubernetes-${K8S_VERSION} \
@@ -90,6 +90,10 @@ build-image:
 set-k8s-deps:
 	$(SET_K8S_DEPS_CMD)
 
+.PHONY: deps
+deps:
+	$(DEPS_CMD)
+
 k8s-code-gen:
 	$(K8S_CODE_GEN_CMD)
 
@@ -117,9 +121,6 @@ mocks: build
 dev:
 	$(DEV_CMD)
 
-.PHONY: deps
-deps:
-	$(DEPS_CMD)
 
 .PHONY: push
 push: export PUSH_IMAGE=true
