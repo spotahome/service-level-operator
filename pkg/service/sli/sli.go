@@ -26,12 +26,12 @@ func (r *Result) AvailabilityRatio() (float64, error) {
 		return 1, nil
 	}
 
-	dw, err := r.ErrorRatio()
+	eRat, err := r.ErrorRatio()
 	if err != nil {
 		return 0, err
 	}
 
-	return 1 - dw, nil
+	return 1 - eRat, nil
 }
 
 // ErrorRatio returns the error of an SLI result in.
@@ -53,4 +53,5 @@ func (r *Result) ErrorRatio() (float64, error) {
 type Retriever interface {
 	// Retrieve returns the result of a SLI retrieved from the implemented backend.
 	Retrieve(*measurev1alpha1.SLI) (Result, error)
+	fmt.Stringer
 }

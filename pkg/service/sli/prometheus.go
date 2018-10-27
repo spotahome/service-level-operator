@@ -31,6 +31,11 @@ func NewPrometheus(promCliFactory promcli.ClientFactory, logger log.Logger) Retr
 	}
 }
 
+// String satisfies fmt.Stringer interface.
+func (p *prometheus) String() string {
+	return "prometheus"
+}
+
 // Retrieve satisfies Service interface..
 func (p *prometheus) Retrieve(sli *measurev1alpha1.SLI) (Result, error) {
 	cli, err := p.cliFactory.GetV1APIClient(sli.Prometheus.Address)
