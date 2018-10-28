@@ -23,6 +23,7 @@ import (
 	kubernetesclifactory "github.com/slok/service-level-operator/pkg/service/client/kubernetes"
 	promclifactory "github.com/slok/service-level-operator/pkg/service/client/prometheus"
 	kubernetesservice "github.com/slok/service-level-operator/pkg/service/kubernetes"
+	"github.com/slok/service-level-operator/pkg/service/metrics"
 )
 
 const (
@@ -54,8 +55,9 @@ func (m *Main) Run() error {
 		m.logger.Warnf("running in faked mode, any external service will be faked")
 	}
 
-	// Create prometheus registry to expose metrics.
+	// Create prometheus registry and metrics service to expose and measure with metrics.
 	promReg := prometheus.NewRegistry()
+	metricssvc := metrics.NewPrometheus(promReg)
 
 	// Create services
 	k8sstdcli, k8scrdcli, k8saexcli, err := m.createKubernetesClients()
@@ -113,7 +115,7 @@ func (m *Main) Run() error {
 	{
 		promCliFactory := m.createPrometheusCliFactory()
 		cfg := m.flags.toOperatorConfig()
-		op, err := operator.New(cfg, promReg, promCliFactory, k8ssvc, m.logger)
+		op, err := operator.New(cfg, promReg, promCliFactory, k8ssvc, metricssvc, m.logger)
 		if err != nil {
 			return err
 		}
