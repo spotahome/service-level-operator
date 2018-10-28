@@ -1,8 +1,6 @@
 package slo
 
 import (
-	"fmt"
-
 	measurev1alpha1 "github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1"
 	"github.com/slok/service-level-operator/pkg/log"
 	"github.com/slok/service-level-operator/pkg/service/sli"
@@ -13,7 +11,6 @@ type Output interface {
 	// Create will create the SLO result on the specific format.
 	// It receives the SLO processed and it's result.
 	Create(serviceLevel *measurev1alpha1.ServiceLevel, slo *measurev1alpha1.SLO, result *sli.Result) error
-	fmt.Stringer
 }
 
 type logger struct {
@@ -26,11 +23,6 @@ func NewLogger(l log.Logger) Output {
 	return &logger{
 		logger: l,
 	}
-}
-
-// String satisfies fmt.Stringer interface.
-func (l *logger) String() string {
-	return "log"
 }
 
 // Create will log the result on the console.

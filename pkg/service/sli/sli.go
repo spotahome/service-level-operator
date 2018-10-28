@@ -53,5 +53,4 @@ func (r *Result) ErrorRatio() (float64, error) {
 type Retriever interface {
 	// Retrieve returns the result of a SLI retrieved from the implemented backend.
 	Retrieve(*measurev1alpha1.SLI) (Result, error)
-	fmt.Stringer
 }

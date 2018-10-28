@@ -82,11 +82,6 @@ func NewPrometheus(cfg PrometheusCfg, reg prometheus.Registerer, logger log.Logg
 	return p
 }
 
-// String satisfies fmt.Stringer interface.
-func (p *prometheusOutput) String() string {
-	return "prometheus"
-}
-
 // Create satisfies output interface. By setting the correct values on the different
 // metrics of the SLO.
 func (p *prometheusOutput) Create(serviceLevel *measurev1alpha1.ServiceLevel, slo *measurev1alpha1.SLO, result *sli.Result) error {
