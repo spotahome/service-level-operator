@@ -11,6 +11,7 @@ import (
 	"github.com/slok/service-level-operator/pkg/log"
 	promcli "github.com/slok/service-level-operator/pkg/service/client/prometheus"
 	"github.com/slok/service-level-operator/pkg/service/kubernetes"
+	"github.com/slok/service-level-operator/pkg/service/metrics"
 	"github.com/slok/service-level-operator/pkg/service/sli"
 	"github.com/slok/service-level-operator/pkg/service/slo"
 )
@@ -33,16 +34,21 @@ type Config struct {
 }
 
 // New returns pod terminator operator.
-func New(cfg Config, promreg *prometheus.Registry, promCliFactory promcli.ClientFactory, k8ssvc kubernetes.Service, logger log.Logger) (operator.Operator, error) {
+func New(cfg Config, promreg *prometheus.Registry, promCliFactory promcli.ClientFactory, k8ssvc kubernetes.Service, metricssvc metrics.Service, logger log.Logger) (operator.Operator, error) {
 
 	// Create crd.
 	ptCRD := newServiceLevelCRD(cfg, k8ssvc, logger)
 
 	// Create services.
+	promRetriever := sli.NewPrometheus(promCliFactory, logger.WithField("sli-retriever", "prometheus"))
 	retrieverFact := sli.NewRetrieverFactory(
-		sli.NewPrometheus(promCliFactory, logger.WithField("sli-retriever", "prometheus")))
+		sli.NewMetricsMiddleware(metricssvc, "prometheus", promRetriever),
+	)
+
+	promOutput := slo.NewPrometheus(slo.PrometheusCfg{}, promreg, logger.WithField("slo-output", "prometheus"))
 	outputFact := slo.NewOutputFactory(
-		slo.NewPrometheus(slo.PrometheusCfg{}, promreg, logger.WithField("slo-output", "prometheus")))
+		slo.NewMetricsMiddleware(metricssvc, "prometheus", promOutput),
+	)
 
 	// Create handler.
 	handler := NewHandler(outputFact, retrieverFact, logger)
