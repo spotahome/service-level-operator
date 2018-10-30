@@ -28,9 +28,9 @@ func NewMetricsMiddleware(metricssvc metrics.Service, kind string, next Output) 
 // Create satisfies slo.Output interface.
 func (m metricsMiddleware) Create(serviceLevel *measurev1alpha1.ServiceLevel, slo *measurev1alpha1.SLO, result *sli.Result) (err error) {
 	defer func(t time.Time) {
-		m.metricssvc.ObserveSLOOuputCreateDuration(slo, m.kind, t)
+		m.metricssvc.ObserveOuputCreateDuration(slo, m.kind, t)
 		if err != nil {
-			m.metricssvc.IncSSLOOuputCreateError(slo, m.kind)
+			m.metricssvc.IncOuputCreateError(slo, m.kind)
 		}
 	}(time.Now())
 	return m.next.Create(serviceLevel, slo, result)
