@@ -22,7 +22,7 @@ func (r *Result) AvailabilityRatio() (float64, error) {
 	}
 
 	// If no total then everything ok.
-	if r.TotalQ == 0 {
+	if r.TotalQ <= 0 {
 		return 1, nil
 	}
 
@@ -42,7 +42,7 @@ func (r *Result) ErrorRatio() (float64, error) {
 	}
 
 	// If no total then everything ok.
-	if r.TotalQ == 0 {
+	if r.TotalQ <= 0 {
 		return 0, nil
 	}
 
