@@ -12,8 +12,8 @@ import (
 	promcli "github.com/slok/service-level-operator/pkg/service/client/prometheus"
 	"github.com/slok/service-level-operator/pkg/service/kubernetes"
 	"github.com/slok/service-level-operator/pkg/service/metrics"
+	"github.com/slok/service-level-operator/pkg/service/output"
 	"github.com/slok/service-level-operator/pkg/service/sli"
-	"github.com/slok/service-level-operator/pkg/service/slo"
 )
 
 const (
@@ -45,9 +45,9 @@ func New(cfg Config, promreg *prometheus.Registry, promCliFactory promcli.Client
 		sli.NewMetricsMiddleware(metricssvc, "prometheus", promRetriever),
 	)
 
-	promOutput := slo.NewPrometheus(slo.PrometheusCfg{}, promreg, logger.WithField("slo-output", "prometheus"))
-	outputFact := slo.NewOutputFactory(
-		slo.NewMetricsMiddleware(metricssvc, "prometheus", promOutput),
+	promOutput := output.NewPrometheus(output.PrometheusCfg{}, promreg, logger.WithField("slo-output", "prometheus"))
+	outputFact := output.NewFactory(
+		output.NewMetricsMiddleware(metricssvc, "prometheus", promOutput),
 	)
 
 	// Create handler.

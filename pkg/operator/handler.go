@@ -9,19 +9,19 @@ import (
 
 	measurev1alpha1 "github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1"
 	"github.com/slok/service-level-operator/pkg/log"
+	"github.com/slok/service-level-operator/pkg/service/output"
 	"github.com/slok/service-level-operator/pkg/service/sli"
-	"github.com/slok/service-level-operator/pkg/service/slo"
 )
 
 // Handler is the Operator handler.
 type Handler struct {
-	outputerFact  slo.OutputFactory
+	outputerFact  output.Factory
 	retrieverFact sli.RetrieverFactory
 	logger        log.Logger
 }
 
 // NewHandler returns a new project handler
-func NewHandler(outputerFact slo.OutputFactory, retrieverFact sli.RetrieverFactory, logger log.Logger) *Handler {
+func NewHandler(outputerFact output.Factory, retrieverFact sli.RetrieverFactory, logger log.Logger) *Handler {
 	return &Handler{
 		outputerFact:  outputerFact,
 		retrieverFact: retrieverFact,

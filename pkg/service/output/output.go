@@ -1,4 +1,4 @@
-package slo
+package output
 
 import (
 	measurev1alpha1 "github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1"
@@ -6,10 +6,10 @@ import (
 	"github.com/slok/service-level-operator/pkg/service/sli"
 )
 
-// Output knows how expose/send/create the output of a SLO.
+// Output knows how expose/send/create the output of a SLO and SLI result.
 type Output interface {
-	// Create will create the SLO result on the specific format.
-	// It receives the SLO processed and it's result.
+	// Create will create the SLI result and the SLO on the specific format.
+	// It receives the SLI's SLO and it's result.
 	Create(serviceLevel *measurev1alpha1.ServiceLevel, slo *measurev1alpha1.SLO, result *sli.Result) error
 }
 

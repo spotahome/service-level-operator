@@ -1,4 +1,4 @@
-package slo
+package output
 
 import (
 	"time"

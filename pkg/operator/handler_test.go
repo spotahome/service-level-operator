@@ -8,13 +8,13 @@ import (
 	"github.com/stretchr/testify/mock"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
+	moutput "github.com/slok/service-level-operator/mocks/service/output"
 	msli "github.com/slok/service-level-operator/mocks/service/sli"
-	mslo "github.com/slok/service-level-operator/mocks/service/slo"
 	measurev1alpha1 "github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1"
 	"github.com/slok/service-level-operator/pkg/log"
 	"github.com/slok/service-level-operator/pkg/operator"
+	"github.com/slok/service-level-operator/pkg/service/output"
 	"github.com/slok/service-level-operator/pkg/service/sli"
-	"github.com/slok/service-level-operator/pkg/service/slo"
 )
 
 var (
@@ -133,8 +133,8 @@ func TestHandler(t *testing.T) {
 			assert := assert.New(t)
 
 			// Mocks.
-			mout := &mslo.Output{}
-			moutf := slo.MockOutputFactory{Mock: mout}
+			mout := &moutput.Output{}
+			moutf := output.MockFactory{Mock: mout}
 			mret := &msli.Retriever{}
 			mretf := sli.MockRetrieverFactory{Mock: mret}
 
