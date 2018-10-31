@@ -1,0 +1,7 @@
+## 0.x.x / 2018-xx-xx
+
+* [FEATURE] Add prometheus metrics for the SLI processing flow.
+* [FEATURE] Add deploy example manifests for Kubernetes.
+* [FEATURE] Add Prometheus SLI inputs and SLI result outputs.
+* [FEATURE] Add operator.
+* [FEATURE] Add service level CRD.
