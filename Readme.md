@@ -6,6 +6,8 @@ This operator interacts with Kubernetes using the CRDs as a way to define applic
 
 Although this operator is though to interact with different backends and generate different output backends, at this moment only uses [Prometheus] as input and output backend.
 
+![grafana graphs](img/grafana_graphs1.png)
+
 ## Example
 
 For this example the output and input backend will be [Prometheus].
@@ -86,7 +88,7 @@ Is important to note that like every metrics this is not exact and is a aproxima
 
 ## Query examples
 
-## Availability level rate
+### Availability level rate
 
 This will output the availability rate of a service based.
 
@@ -98,7 +100,7 @@ This will output the availability rate of a service based.
 ) * 100
 ```
 
-## Availability level in the last 24h
+### Availability level in the last 24h
 
 This will output the availability rate of a service based.
 
@@ -110,17 +112,36 @@ This will output the availability rate of a service based.
 ) * 100
 ```
 
-## Error budget
+### Error budget burn rate
 
-Calculating the error budget is a little bit more tricky.
+The way this operator abstracts the SLI results it's easy to get the error budget burn rate without a time range projection, this is because the calculation is constant and based on ratios (0-1) instead of duration, rps, processed messages...
 
-### Context
+To know the error budget burn rate we need to get the errors in a interval (eg `5m`):
+
+```text
+increase(service_level_sli_result_error_ratio_total{service_level="${service_level}", slo="${slo}"}[5m])
+```
+
+And to get the maximum burn rate that we can afford so we don't consume all the error budget would be:
+
+```text
+(1 - service_level_slo_objective_ratio{service_level="${service_level}", slo="${slo}"})
+  * increase(service_level_sli_result_count_total{service_level="${service_level}", slo="${slo}"}[${interval}])
+```
+
+This query gets the error budget ratio that we have (eg: for a 99.99% SLO would be `0.0001` ratio) and multiplies for the total SLI result counts that we could get in the same range as the previous query (`5m`), this gives us the max error ratio that we can burn for the given SLO.
+
+### Error budget with a 30d projection and burndown chart
+
+Calculating the burndown charts is a little bit more tricky.
+
+#### Context
 
 - Taking the previous example we are calculating error budget based on 1 month, this are 43200m (30 \* 24 \* 60).
 - Our SLO objective is 99.99 (in ratio: 0.9998999999999999)
 - Error budget is based in a 100% for 30d that decrements when availability is less than 99.99% (like the SLO specifies).
 
-### Query
+#### Query
 
 ```text
 (
@@ -147,6 +168,33 @@ Let's decompose the query.
 So `(1 - service_level_slo_objective_ratio) * 43200 * increase(service_level_sli_result_count_total[1m]) - increase(service_level_sli_result_error_ratio_total[${range}])` returns the number of remaining error budget we have after `${range}`.
 
 If we take that last part and divide for the total error budget we have for the month (`(1 - service_level_slo_objective_ratio) * 43200 * increase(service_level_sli_result_count_total[1m])`) this returns us a ratio of the error budget consumed. Multiply by 100 and we have the percent of error budget consumed after `${range}`.
+
+## Prometheus alerts example
+
+The operator gives the SLI/SLOs in the same format so we could create 1 alert for all of our SLOs, or be more specific and filter by labels.
+
+```yaml
+groups:
+  - name: slo.rules
+    rules:
+      - alert: SLOErrorBudgetBurnRateTooFast
+        expr: |
+          increase(service_level_sli_result_error_ratio_total[1h])
+          >
+          (
+            (1 - service_level_slo_objective_ratio)
+              * increase(service_level_sli_result_count_total[1h])
+          )
+        for: 10m
+        labels:
+          severity: critical
+          team: a-team
+        annotations:
+          summary: The SLO error budget burn rate is too fast
+          description: The error rate in 24h for the {{$labels.service_level}}/{{$labels.slo}} SLO error budget is too fast, at this rate the service error budget will be fully consumed.
+```
+
+This alert alerts when the total errors in 1h is greater than the specified error budget based on the SLO. In other words this would mean that if we continue with this error rate we will consume the error budget in less time that we want.
 
 [sre-book-slo]: https://landing.google.com/sre/book/chapters/service-level-objectives.html
 [prometheus]: https://prometheus.io/
