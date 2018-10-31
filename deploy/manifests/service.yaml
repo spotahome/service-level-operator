@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-level-operator
+  labels:
+    app: service-level-operator
+    component: app
+spec:
+  ports:
+    - port: 80
+      protocol: TCP
+      name: http
+      targetPort: http
+  selector:
+    app: service-level-operator
+    component: app

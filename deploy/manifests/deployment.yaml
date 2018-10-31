@@ -1,0 +1,46 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: service-level-operator
+  labels:
+    app: service-level-operator
+    component: app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: service-level-operator
+      component: app
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: service-level-operator
+        component: app
+    spec:
+      serviceAccountName: service-level-operator
+      containers:
+        - name: app
+          imagePullPolicy: Always
+          image: quay.io/slok/service-level-operator:latest
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /healthz/ready
+              port: http
+          livenessProbe:
+            httpGet:
+              path: /healthz/live
+              port: http
+          resources:
+            limits:
+              cpu: 220m
+              memory: 254Mi
+            requests:
+              cpu: 120m
+              memory: 128Mi
