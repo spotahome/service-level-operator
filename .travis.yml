@@ -1,0 +1,29 @@
+language: go
+sudo: required
+services:
+  - docker
+go:
+  - "1.11"
+
+before_install:
+  # Upgrade default docker
+  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+  - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+  - sudo apt-get update
+  - sudo apt-get -y install docker-ce
+
+script:
+  - make ci
+
+deploy:
+  - provider: script
+    script: docker login -u="${DOCKER_USER}" -p="${DOCKER_PASSWORD}" quay.io && make push
+    on:
+      tags: true
+
+env:
+  global:
+    - GO111MODULE: on
+    - DOCKER_USER: slok+serviceleveloperator
+    # DOCKER_PASSWORD
+    - secure: "HAP8tX2sqS+l84TrMz0/XXeLMgDo4CDmsQoS1bYM8TSm1laIvs/fEeZuBjPy6Rye8ix0ZVJOIGmO1bRw7DYfWEQRvQHFrvx4T35sLYHup5TtM/WVh3dyAdpysvhZEiQ9fu3V+Lp/87tbbni9h5LKJk93FvV8dDisivEKvaZtdEqXs52N3nznpVJut/iMDJ4+6/DHIRRH0EEYjfo/MD0MWx8BPbNX/jHaRKaM8bJempbTfTNzrZCQKsf3eShlngaK9jkuwWk51g9GiLtaeda+CCobouEWczzMRQZpOChlnmOAUFYNa7QiUDwGxi5aGbse1bRkRIJjkRPDPBNoXCV1Un3RUkYXXDkYfeGv3TrG4KBQXtylItZthJRA+lY9goleXnV2XS3GBi9TJDQ9YWlPZnG3Q/PdrhAV1AkX2Vz16iyzLyZeR3yOgZ6yt1zcdUgWWsirm3dt75kPcE1I+n1q3BREEGJgo5TRlpQSl2S/K+18xMRM7rkcU3U/D5eABt4mUqtYT1grVhrQAxKqEd5+jY7vc3CzvQNlSQ2Ilp1A09t3mcVRYVd8vG2baR93KzYHhlofrB5Z4QkSpu45AmhfUXjVtI+t63odOLp/dEIbKbHkejmZ1plNklAcgYxCax+d24OmDoG6oVq9lOwctNP5m/JslGuP5reMOMPc05u2wiA="

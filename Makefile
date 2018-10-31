@@ -109,6 +109,8 @@ integration-test: build
 	$(DOCKER_RUN_CMD) /bin/sh -c '$(INTEGRATION_TEST_CMD)'
 .PHONY: test
 test: integration-test
+.PHONY: test
+ci: test
 
 # Mocks stuff in dev
 .PHONY: mocks

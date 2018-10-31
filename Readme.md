@@ -1,4 +1,4 @@
-# service-level-operator
+# service-level-operator [![Build Status][travis-image]][travis-url] [![Go Report Card][goreport-image]][goreport-url] [![docker image][quay-image]][quay-url]
 
 Service level operator abstracts and automates the service level of Kubernetes applications by generation SLI & SLOs to be consumed easily by dashboards and alerts and allow that the SLI/SLO's live with the application flow.
 
@@ -196,5 +196,11 @@ groups:
 
 This alert alerts when the total errors in 1h is greater than the specified error budget based on the SLO. In other words this would mean that if we continue with this error rate we will consume the error budget in less time that we want.
 
+[travis-image]: https://travis-ci.org/slok/service-level-operator.svg?branch=master
+[travis-url]: https://travis-ci.org/slok/service-level-operator
+[goreport-image]: https://goreportcard.com/badge/github.com/slok/service-level-operator
+[goreport-url]: https://goreportcard.com/report/github.com/slok/service-level-operator
+[quay-image]: https://quay.io/repository/slok/service-level-operator/status
+[quay-url]: https://quay.io/repository/slok/service-level-operator
 [sre-book-slo]: https://landing.google.com/sre/book/chapters/service-level-objectives.html
 [prometheus]: https://prometheus.io/
