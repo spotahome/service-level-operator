@@ -76,6 +76,10 @@ The approach of using counters (instead of gauges) to store the total counts and
 
 Is important to note that like every metrics this is not exact and is a aproximation (good one but an approximation after all)
 
+## Grafana dashboard
+
+There is a [grafana dashboard][grafana-dashboard]] to show the SLO's status.
+
 ## Supported input/output backends
 
 ### Input
@@ -204,3 +208,4 @@ This alert alerts when the total errors in 1h is greater than the specified erro
 [quay-url]: https://quay.io/repository/slok/service-level-operator
 [sre-book-slo]: https://landing.google.com/sre/book/chapters/service-level-objectives.html
 [prometheus]: https://prometheus.io/
+[grafana-dashboard]: https://grafana.com/dashboards/8793
