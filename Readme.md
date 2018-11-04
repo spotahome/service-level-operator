@@ -78,7 +78,7 @@ Is important to note that like every metrics this is not exact and is a aproxima
 
 ## Grafana dashboard
 
-There is a [grafana dashboard][grafana-dashboard]] to show the SLO's status.
+There is a [grafana dashboard][grafana-dashboard] to show the SLO's status.
 
 ## Supported input/output backends
 
