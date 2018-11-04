@@ -157,11 +157,10 @@ k8s.io/apiextensions-apiserver v0.0.0-20180910084140-b05d9bb7cc74 h1:7ueW9dpCd0i
 k8s.io/apiextensions-apiserver v0.0.0-20180910084140-b05d9bb7cc74/go.mod h1:IxkesAMoaCRoLrPJdZNZUQp9NfZnzqaVzLhb2VEQzXE=
 k8s.io/apimachinery v0.0.0-20180904193909-def12e63c512 h1:/Z1m/6oEN6hE2SzWP4BHW2yATeUrBRr+1GxNf1Ny58Y=
 k8s.io/apimachinery v0.0.0-20180904193909-def12e63c512/go.mod h1:ccL7Eh7zubPUSh9A3USN90/OzHNSVN6zxzde07TDCL0=
-k8s.io/client-go v2.0.0-alpha.0.0.20180910083459-2cefa64ff137+incompatible h1:OtFD+1WyykBlQ980RTvPQCDP2xMmKWL9h+onvblGVR0=
+k8s.io/client-go v2.0.0-alpha.0.0.20180910083459-2cefa64ff137+incompatible h1:Ch3wIkSY4QNrqRAJqgQIIpwqaCi7bbiIP23BAV9Qq/U=
 k8s.io/client-go v2.0.0-alpha.0.0.20180910083459-2cefa64ff137+incompatible/go.mod h1:7vJpHMYJwNQCWgzmNV+VYUl1zCObLyodBc8nIyt8L5s=
 k8s.io/kube-openapi v0.0.0-20180420230433-1e45fb05b063/go.mod h1:BXM9ceUBTj2QnfH2MK1odQs778ajze1RxcmP6S8RVVc=
 k8s.io/kube-openapi v0.0.0-20180928202339-9dfdf9be683f h1:Le6SCx+suR3mkKGmyFNs0YQJLGlItyGQSeil+JZxVdM=
 k8s.io/kube-openapi v0.0.0-20180928202339-9dfdf9be683f/go.mod h1:BXM9ceUBTj2QnfH2MK1odQs778ajze1RxcmP6S8RVVc=
+k8s.io/kubernetes v1.11.3 h1:Lwk2dfIeJySZ//SmyM2Y8AlPj4xgXMcrXJFw8v4JN8g=
 k8s.io/kubernetes v1.11.3/go.mod h1:ocZa8+6APFNC2tX1DZASIbocyYT5jHzqFVsY5aoB7Jk=
-k8s.io/kubernetes v1.12.1 h1:ud3qsh7xkSlwtboMEH1KLP2YlI0NYVYjVI/mX0jBRbY=
-k8s.io/kubernetes v1.12.1/go.mod h1:ocZa8+6APFNC2tX1DZASIbocyYT5jHzqFVsY5aoB7Jk=
