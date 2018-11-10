@@ -19,10 +19,9 @@ require (
 	github.com/prometheus/client_model v0.0.0-20180712105110-5c3871d89910 // indirect
 	github.com/prometheus/common v0.0.0-20180801064454-c7de2306084e
 	github.com/prometheus/procfs v0.0.0-20181005140218-185b4288413d // indirect
-	github.com/sirupsen/logrus v1.1.0
+	github.com/sirupsen/logrus v1.2.0
 	github.com/spf13/pflag v1.0.3 // indirect
 	github.com/spotahome/kooper v0.5.0
-	github.com/stretchr/objx v0.1.1 // indirect
 	github.com/stretchr/testify v1.2.2
 	golang.org/x/crypto v0.0.0-20181001203147-e3636079e1a4 // indirect
 	golang.org/x/sync v0.0.0-20180314180146-1d60e4601c6f
