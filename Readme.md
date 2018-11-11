@@ -120,20 +120,23 @@ This will output the availability rate of a service based.
 
 The way this operator abstracts the SLI results it's easy to get the error budget burn rate without a time range projection, this is because the calculation is constant and based on ratios (0-1) instead of duration, rps, processed messages...
 
-To know the error budget burn rate we need to get the errors in a interval (eg `5m`):
+To know the error budget burn rate we need to get the errors ratio in a interval (eg `5m`):
 
 ```text
 increase(service_level_sli_result_error_ratio_total{service_level="${service_level}", slo="${slo}"}[5m])
+/
+increase(service_level_sli_result_count_total{service_level="${service_level}", slo="${slo}"}[${5m}]
 ```
 
 And to get the maximum burn rate that we can afford so we don't consume all the error budget would be:
 
 ```text
 (1 - service_level_slo_objective_ratio{service_level="${service_level}", slo="${slo}"})
-  * increase(service_level_sli_result_count_total{service_level="${service_level}", slo="${slo}"}[${interval}])
 ```
 
-This query gets the error budget ratio that we have (eg: for a 99.99% SLO would be `0.0001` ratio) and multiplies for the total SLI result counts that we could get in the same range as the previous query (`5m`), this gives us the max error ratio that we can burn for the given SLO.
+This query gets the max error budget ratio that we can afford (eg: for a 99.99% SLO would be `0.0001` ratio).
+
+With those 2 queries we know the error ratio (error burn rate) and the max error ratio that we can afford (error budget).
 
 ### Error budget with a 30d projection and burndown chart
 
@@ -167,38 +170,67 @@ Let's decompose the query.
 
 `(1 - service_level_slo_objective_ratio) * 43200 * increase(service_level_sli_result_count_total[1m])` is the total ratio measured in 1m (sucess + failures) multiplied by the number of minutes in a month and the error budget ratio(1-0.9998999999999999). In other words this is the total (sum) number of error budget for 1 month we have.
 
-`increase(service_level_sli_result_error_ratio_total[${range}])` this is the SLO error sum that we had in ${range} (range changes over time, the first day of the month will be 1d, the 15th of the month will be 15d).
+`increase(service_level_sli_result_error_ratio_total[${range}])` this is the SLO error sum that we had in \${range} (range changes over time, the first day of the month will be 1d, the 15th of the month will be 15d).
 
 So `(1 - service_level_slo_objective_ratio) * 43200 * increase(service_level_sli_result_count_total[1m]) - increase(service_level_sli_result_error_ratio_total[${range}])` returns the number of remaining error budget we have after `${range}`.
 
 If we take that last part and divide for the total error budget we have for the month (`(1 - service_level_slo_objective_ratio) * 43200 * increase(service_level_sli_result_count_total[1m])`) this returns us a ratio of the error budget consumed. Multiply by 100 and we have the percent of error budget consumed after `${range}`.
 
-## Prometheus alerts example
+## Prometheus alerts
 
-The operator gives the SLI/SLOs in the same format so we could create 1 alert for all of our SLOs, or be more specific and filter by labels.
+The operator gives the SLIs and SLOs in the same format so we could create 1 alert for all of our SLOs, or be more specific and filter by labels.
+
+### Multiple Burn Rate Alerts (SRE workbook)
+
+This Alert follows Google's SRE approach for alerting based on SLO burn rate and error budget , specifically the one on the [SRE workbook][sre-workbook] Chapter 5.4 (Alert on burn rate), the 5th approach (Multiple burn rate alerts).
 
 ```yaml
 groups:
   - name: slo.rules
     rules:
-      - alert: SLOErrorBudgetBurnRateTooFast
+      - alert: SLOErrorRateTooFast1h
         expr: |
-          increase(service_level_sli_result_error_ratio_total[1h])
-          >
           (
-            (1 - service_level_slo_objective_ratio)
-              * increase(service_level_sli_result_count_total[1h])
-          )
-        for: 10m
+            increase(service_level_sli_result_error_ratio_total[1h])
+            /
+            increase(service_level_sli_result_count_total[1h])
+          ) > (1 - service_level_slo_objective_ratio) * 0.02
         labels:
           severity: critical
           team: a-team
         annotations:
-          summary: The SLO error budget burn rate is too fast
-          description: The error rate in 24h for the {{$labels.service_level}}/{{$labels.slo}} SLO error budget is too fast, at this rate the service error budget will be fully consumed.
+          summary: The SLO error budget burn rate for 1h is greater than 2%
+          description: The error rate for 1h in the {{$labels.service_level}}/{{$labels.slo}} SLO error budget is too fast, is greater than the total error budget 2%.
+      - alert: SLOErrorRateTooFast6h
+        expr: |
+          (
+            increase(service_level_sli_result_error_ratio_total[6h])
+            /
+            increase(service_level_sli_result_count_total[6h])
+          ) > (1 - service_level_slo_objective_ratio) * 0.05
+        labels:
+          severity: critical
+          team: a-team
+        annotations:
+          summary: The SLO error budget burn rate for 6h is greater than 5%
+          description: The error rate for 6h in the {{$labels.service_level}}/{{$labels.slo}} SLO error budget is too fast, is greater than the total error budget 5%.
 ```
 
-This alert alerts when the total errors in 1h is greater than the specified error budget based on the SLO. In other words this would mean that if we continue with this error rate we will consume the error budget in less time that we want.
+This alert will trigger if the error rate in 1h is greater than the 2% of the error budget or in 6h if greater than 5%. This numbers are the recomended ones by Google as a baseline based on their experience over the years.
+
+| severity | time range | expected budget consumed at this rate |
+| -------- | ---------- | ------------------------------------- |
+| 2%       | 1h         | 100 / 2 \* 1h = 50h (2.08d)           |
+| 5%       | 6h         | 100 / 5 \* 6h = 120h (5d)             |
+| 10%      | 3d         | 100 / 10 \* 3d = 30d                  |
+
+### Multiwindow, Multi-Burn-Rate Alerts (SRE workbook)
+
+This alert kind is extracted from the [SRE workbook][sre-workbook] Chapter 5.4 (Alert on burn rate), the 6th approach (Multiwindow, Multi-burn-rate alerts)
+
+Our previous alerts could happen that a big error rate peak in 5m could be enough to bypass the SLO threshold for 60m, so we can add a second check to the previous alert to check if the error rate countinues by passing the SLO error budget threshold. For example checking the past 5m or 10m.
+
+Check the alert [here][multiwindow-alert]
 
 [travis-image]: https://travis-ci.org/slok/service-level-operator.svg?branch=master
 [travis-url]: https://travis-ci.org/slok/service-level-operator
@@ -209,3 +241,5 @@ This alert alerts when the total errors in 1h is greater than the specified erro
 [sre-book-slo]: https://landing.google.com/sre/book/chapters/service-level-objectives.html
 [prometheus]: https://prometheus.io/
 [grafana-dashboard]: https://grafana.com/dashboards/8793
+[sre-workbook]: https://books.google.es/books?id=fElmDwAAQBAJ
+[multiwindow-alert]: alerts/slo.yaml

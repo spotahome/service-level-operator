@@ -28,10 +28,15 @@ DEV_DIR := ./docker/dev
 # cmds
 UNIT_TEST_CMD := ./hack/scripts/unit-test.sh
 INTEGRATION_TEST_CMD := ./hack/scripts/integration-test.sh
+TEST_ALERTS_CMD := ./hack/scripts/test-alerts.sh
 MOCKS_CMD := ./hack/scripts/mockgen.sh
 DOCKER_RUN_CMD := docker run \
 	-v ${PWD}:/src \
 	--rm -it $(SERVICE_NAME)
+DOCKER_ALERTS_TEST_RUN_CMD := docker run \
+	-v ${PWD}:/prometheus \
+	--entrypoint=${TEST_ALERTS_CMD} \
+	--rm -it prom/prometheus
 BUILD_BINARY_CMD := VERSION=${VERSION} ./hack/scripts/build-binary.sh
 BUILD_IMAGE_CMD := VERSION=${VERSION} ./hack/scripts/build-image.sh
 DEBUG_CMD := go run ./cmd/service-level-operator/* --debug
@@ -102,6 +107,9 @@ openapi-code-gen:
 	$(OPENAPI_CODE_GEN_CMD)
 
 # Test stuff in dev
+.PHONY: test-alerts
+test-alerts:
+	$(DOCKER_ALERTS_TEST_RUN_CMD)
 .PHONY: unit-test
 unit-test: build
 	$(DOCKER_RUN_CMD) /bin/sh -c '$(UNIT_TEST_CMD)'
@@ -111,7 +119,7 @@ integration-test: build
 .PHONY: test
 test: integration-test
 .PHONY: test
-ci: test
+ci: test test-alerts
 
 # Mocks stuff in dev
 .PHONY: mocks
