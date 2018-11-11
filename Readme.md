@@ -220,7 +220,7 @@ This alert will trigger if the error rate in 1h is greater than the 2% of the er
 
 | severity | time range | expected budget consumed at this rate |
 | -------- | ---------- | ------------------------------------- |
-| 2%       | 1h         | 100 / 2 \* 1h = 50h(2.08d)            |
+| 2%       | 1h         | 100 / 2 \* 1h = 50h (2.08d)           |
 | 5%       | 6h         | 100 / 5 \* 6h = 120h (5d)             |
 | 10%      | 3d         | 100 / 10 \* 3d = 30d                  |
 
@@ -230,50 +230,7 @@ This alert kind is extracted from the [SRE workbook][sre-workbook] Chapter 5.4 (
 
 Our previous alerts could happen that a big error rate peak in 5m could be enough to bypass the SLO threshold for 60m, so we can add a second check to the previous alert to check if the error rate countinues by passing the SLO error budget threshold. For example checking the past 5m or 10m.
 
-```yaml
-groups:
-  - name: slo.rules
-    rules:
-      - alert: SLOErrorRateTooFast1h
-        expr: |
-          (
-            increase(service_level_sli_result_error_ratio_total[1h])
-            /
-            increase(service_level_sli_result_count_total[1h])
-          ) > (1 - service_level_slo_objective_ratio) * 0.02
-          and
-          (
-            increase(service_level_sli_result_error_ratio_total[5m])
-            /
-            increase(service_level_sli_result_count_total[5m])
-          ) > (1 - service_level_slo_objective_ratio) * 0.02
-
-        labels:
-          severity: critical
-          team: a-team
-        annotations:
-          summary: The SLO error budget burn rate for 1h is greater than 2%
-          description: The error rate for 1h in the {{$labels.service_level}}/{{$labels.slo}} SLO error budget is too fast, is greater than the total error budget 2%.
-      - alert: SLOErrorRateTooFast6h
-        expr: |
-          (
-            increase(service_level_sli_result_error_ratio_total[6h])
-            /
-            increase(service_level_sli_result_count_total[6h])
-          ) > (1 - service_level_slo_objective_ratio) * 0.05
-          and
-          (
-            increase(service_level_sli_result_error_ratio_total[30m])
-            /
-            increase(service_level_sli_result_count_total[30m])
-          ) > (1 - service_level_slo_objective_ratio) * 0.05
-        labels:
-          severity: critical
-          team: a-team
-        annotations:
-          summary: The SLO error budget burn rate for 6h is greater than 5%
-          description: The error rate for 6h in the {{$labels.service_level}}/{{$labels.slo}} SLO error budget is too fast, is greater than the total error budget 5%.
-```
+Check the alert [here][multiwindow-alert]
 
 [travis-image]: https://travis-ci.org/slok/service-level-operator.svg?branch=master
 [travis-url]: https://travis-ci.org/slok/service-level-operator
@@ -285,3 +242,4 @@ groups:
 [prometheus]: https://prometheus.io/
 [grafana-dashboard]: https://grafana.com/dashboards/8793
 [sre-workbook]: https://books.google.es/books?id=fElmDwAAQBAJ
+[multiwindow-alert]: alerts/slo.yaml

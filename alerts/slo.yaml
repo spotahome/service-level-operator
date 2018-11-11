@@ -1,0 +1,42 @@
+groups:
+  - name: slo.rules
+    rules:
+      - alert: SLOErrorRateTooFast1h
+        expr: |
+          (
+            increase(service_level_sli_result_error_ratio_total[1h])
+            /
+            increase(service_level_sli_result_count_total[1h])
+          ) > (1 - service_level_slo_objective_ratio) * 0.02
+          and
+          (
+            increase(service_level_sli_result_error_ratio_total[5m])
+            /
+            increase(service_level_sli_result_count_total[5m])
+          ) > (1 - service_level_slo_objective_ratio) * 0.02
+
+        labels:
+          severity: critical
+          team: a-team
+        annotations:
+          summary: The SLO error budget burn rate for 1h is greater than 2%
+          description: The error rate for 1h in the {{$labels.service_level}}/{{$labels.slo}} SLO error budget is too fast, is greater than the total error budget 2%.
+      - alert: SLOErrorRateTooFast6h
+        expr: |
+          (
+            increase(service_level_sli_result_error_ratio_total[6h])
+            /
+            increase(service_level_sli_result_count_total[6h])
+          ) > (1 - service_level_slo_objective_ratio) * 0.05
+          and
+          (
+            increase(service_level_sli_result_error_ratio_total[30m])
+            /
+            increase(service_level_sli_result_count_total[30m])
+          ) > (1 - service_level_slo_objective_ratio) * 0.05
+        labels:
+          severity: critical
+          team: a-team
+        annotations:
+          summary: The SLO error budget burn rate for 6h is greater than 5%
+          description: The error rate for 6h in the {{$labels.service_level}}/{{$labels.slo}} SLO error budget is too fast, is greater than the total error budget 5%.
