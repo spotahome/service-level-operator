@@ -194,35 +194,35 @@ groups:
             increase(service_level_sli_result_error_ratio_total[1h])
             /
             increase(service_level_sli_result_count_total[1h])
-          ) > (1 - service_level_slo_objective_ratio) * 0.02
+          ) > (1 - service_level_slo_objective_ratio) * 14.6
         labels:
           severity: critical
           team: a-team
         annotations:
-          summary: The SLO error budget burn rate for 1h is greater than 2%
-          description: The error rate for 1h in the {{$labels.service_level}}/{{$labels.slo}} SLO error budget is too fast, is greater than the total error budget 2%.
+          summary: The monthly SLO error budget consumed for 1h is greater than 2%
+          description: The error rate for 1h in the {{$labels.service_level}}/{{$labels.slo}} SLO error budget is being consumed too fast, is greater than 2% monthly budget.
       - alert: SLOErrorRateTooFast6h
         expr: |
           (
             increase(service_level_sli_result_error_ratio_total[6h])
             /
             increase(service_level_sli_result_count_total[6h])
-          ) > (1 - service_level_slo_objective_ratio) * 0.05
+          ) > (1 - service_level_slo_objective_ratio) * 6
         labels:
           severity: critical
           team: a-team
         annotations:
-          summary: The SLO error budget burn rate for 6h is greater than 5%
-          description: The error rate for 6h in the {{$labels.service_level}}/{{$labels.slo}} SLO error budget is too fast, is greater than the total error budget 5%.
+          summary: The monthly SLO error budget consumed for 6h is greater than 5%
+          description: The error rate for 6h in the {{$labels.service_level}}/{{$labels.slo}} SLO error budget is being consumed too fast, is greater than 5% monthly budget.
 ```
 
-This alert will trigger if the error rate in 1h is greater than the 2% of the error budget or in 6h if greater than 5%. This numbers are the recomended ones by Google as a baseline based on their experience over the years.
+This alert will trigger if the error budget consumed in 1h is greater than the 2% for 30 days or in 6h if greater than 5%. This numbers are the recomended ones by Google as a baseline based on their experience over the years.
 
-| severity | time range | expected budget consumed at this rate |
-| -------- | ---------- | ------------------------------------- |
-| 2%       | 1h         | 100 / 2 \* 1h = 50h (2.08d)           |
-| 5%       | 6h         | 100 / 5 \* 6h = 120h (5d)             |
-| 10%      | 3d         | 100 / 10 \* 3d = 30d                  |
+| SLO monthly budget burned | time range | burn rate to consume this percentage |
+| ------------------------- | ---------- | ------------------------------------ |
+| 2%                        | 1h         | 730 * 2 / 100 = 14.6                 |
+| 5%                        | 6h         | 730 / 6 * 5 / 100  = 6               |
+| 10%                       | 3d         | 30 / 3 * 10 / 100  = 1               |
 
 ### Multiwindow, Multi-Burn-Rate Alerts (SRE workbook)
 
