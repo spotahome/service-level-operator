@@ -4,84 +4,93 @@ metadata:
   name: awesome-service
 spec:
   serviceLevelObjectives:
-  # A typical 5xx request SLO.
-  - name: "9999_http_request_lt_500"
-    description: 99.99% of requests must be served with <500 status code.
-    disable: false
-    availabilityObjectivePercent: 99.99
-    serviceLevelIndicator:
-      prometheus:
-        address: http://127.0.0.1:9091
-        totalQuery: |
-          sum(
-            increase(skipper_serve_host_duration_seconds_count{host="www_spotahome_com"}[2m]))
-        errorQuery: |
-          sum(
-            increase(skipper_serve_host_duration_seconds_count{host="www_spotahome_com", code=~"5.."}[2m]))
-    output:
-      prometheus: {}
+    # A typical 5xx request SLO.
+    - name: "9999_http_request_lt_500"
+      description: 99.99% of requests must be served with <500 status code.
+      disable: false
+      availabilityObjectivePercent: 99.99
+      burnRates:
+        - errorBudgetDays: 30
+          thresholds:
+            - timeRangeHours: 1
+              errorBudgetPercent: 2
+            - timeRangeHours: 6
+              errorBudgetPercent: 5
+            - timeRangeHours: 72
+              errorBudgetPercent: 10
+      serviceLevelIndicator:
+        prometheus:
+          address: http://127.0.0.1:9091
+          totalQuery: |
+            sum(
+              increase(skipper_serve_host_duration_seconds_count{host="www_spotahome_com"}[2m]))
+          errorQuery: |
+            sum(
+              increase(skipper_serve_host_duration_seconds_count{host="www_spotahome_com", code=~"5.."}[2m]))
+      output:
+        prometheus: {}
 
-  # Latency example.
-  - name: "90_http_request_latency_lt_250ms"
-    description: 90% of requests must be served with in less than 250ms.
-    disable: false
-    availabilityObjectivePercent: 90
-    serviceLevelIndicator:
-      prometheus:
-        address: http://127.0.0.1:9091
-        totalQuery: |
-          sum(
-            increase(skipper_serve_host_duration_seconds_count{host="www_spotahome_com"}[2m]))
-        errorQuery: |
-          sum(
-            increase(skipper_serve_host_duration_seconds_count{host="www_spotahome_com"}[2m]))
-          -
-          sum(
-            increase(skipper_serve_host_duration_seconds_bucket{host="www_spotahome_com", le="0.25"}[2m]))
-    output:
-      prometheus: {}
+    # Latency example.
+    - name: "90_http_request_latency_lt_250ms"
+      description: 90% of requests must be served with in less than 250ms.
+      disable: false
+      availabilityObjectivePercent: 90
+      serviceLevelIndicator:
+        prometheus:
+          address: http://127.0.0.1:9091
+          totalQuery: |
+            sum(
+              increase(skipper_serve_host_duration_seconds_count{host="www_spotahome_com"}[2m]))
+          errorQuery: |
+            sum(
+              increase(skipper_serve_host_duration_seconds_count{host="www_spotahome_com"}[2m]))
+            -
+            sum(
+              increase(skipper_serve_host_duration_seconds_bucket{host="www_spotahome_com", le="0.25"}[2m]))
+      output:
+        prometheus: {}
 
-  # Same latency example as previous one but with different latency bucket. Is normal to have
-  # multiple SLOs on different latency limits.
-  - name: "99_http_request_latency_lt_500ms"
-    description: 99% of requests must be served with in less than 500ms.
-    disable: false
-    availabilityObjectivePercent: 99
-    serviceLevelIndicator:
-      prometheus:
-        address: http://127.0.0.1:9091
-        totalQuery: |
-          sum(
-            increase(skipper_serve_host_duration_seconds_count{host="www_spotahome_com"}[2m]))
-        errorQuery: |
-          sum(
-            increase(skipper_serve_host_duration_seconds_count{host="www_spotahome_com"}[2m]))
-          -
-          sum(
-            increase(skipper_serve_host_duration_seconds_bucket{host="www_spotahome_com", le="0.5"}[2m]))
-    output:
-      prometheus: {}
+    # Same latency example as previous one but with different latency bucket. Is normal to have
+    # multiple SLOs on different latency limits.
+    - name: "99_http_request_latency_lt_500ms"
+      description: 99% of requests must be served with in less than 500ms.
+      disable: false
+      availabilityObjectivePercent: 99
+      serviceLevelIndicator:
+        prometheus:
+          address: http://127.0.0.1:9091
+          totalQuery: |
+            sum(
+              increase(skipper_serve_host_duration_seconds_count{host="www_spotahome_com"}[2m]))
+          errorQuery: |
+            sum(
+              increase(skipper_serve_host_duration_seconds_count{host="www_spotahome_com"}[2m]))
+            -
+            sum(
+              increase(skipper_serve_host_duration_seconds_bucket{host="www_spotahome_com", le="0.5"}[2m]))
+      output:
+        prometheus: {}
 
-  # Same as previous one except the availability objective. This way we can see that
-  # with the same SLIs our SLO changes drastically.
-  - name: "90_http_request_latency_lt_500ms"
-    description: 90% of requests must be served with in less than 500ms.
-    disable: false
-    availabilityObjectivePercent: 90
-    serviceLevelIndicator:
-      prometheus:
-        address: http://127.0.0.1:9091
-        totalQuery: |
-          sum(
-            increase(skipper_serve_host_duration_seconds_count{host="www_spotahome_com"}[2m]))
-        errorQuery: |
-          sum(
-            increase(skipper_serve_host_duration_seconds_count{host="www_spotahome_com"}[2m]))
-          -
-          sum(
-            increase(skipper_serve_host_duration_seconds_bucket{host="www_spotahome_com", le="0.5"}[2m]))
-    output:
-      prometheus:
-        labels:
-          env: production
-          team: a-team
+    # Same as previous one except the availability objective. This way we can see that
+    # with the same SLIs our SLO changes drastically.
+    - name: "90_http_request_latency_lt_500ms"
+      description: 90% of requests must be served with in less than 500ms.
+      disable: false
+      availabilityObjectivePercent: 90
+      serviceLevelIndicator:
+        prometheus:
+          address: http://127.0.0.1:9091
+          totalQuery: |
+            sum(
+              increase(skipper_serve_host_duration_seconds_count{host="www_spotahome_com"}[2m]))
+          errorQuery: |
+            sum(
+              increase(skipper_serve_host_duration_seconds_count{host="www_spotahome_com"}[2m]))
+            -
+            sum(
+              increase(skipper_serve_host_duration_seconds_bucket{host="www_spotahome_com", le="0.5"}[2m]))
+      output:
+        prometheus:
+          labels:
+            env: production
+            team: a-team

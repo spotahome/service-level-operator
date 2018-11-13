@@ -13,10 +13,11 @@ import (
 )
 
 const (
-	promNS            = "service_level"
-	promSLOSubsystem  = "slo"
-	promSLISubsystem  = "sli"
-	defExpireDuration = 90 * time.Second
+	promNS                   = "service_level"
+	promSLOSubsystem         = "slo"
+	promSLOBurnRateSubsystem = "slo_burn_rate"
+	promSLISubsystem         = "sli"
+	defExpireDuration        = 90 * time.Second
 )
 
 // metricValue is an internal type to store the counters
@@ -27,7 +28,6 @@ type metricValue struct {
 	slo          *measurev1alpha1.SLO
 	errorSum     float64
 	countSum     float64
-	objective    float64
 	expire       time.Time // expire is the time where this metric will expire unless it's refreshed.
 }
 
@@ -112,8 +112,6 @@ func (p *prometheusOutput) Create(serviceLevel *measurev1alpha1.ServiceLevel, sl
 	metric.slo = slo
 	metric.errorSum += errRat
 	metric.countSum++
-	// Objective is in %  so we convert to ratio (0-1).
-	metric.objective = slo.AvailabilityObjectivePercent / 100
 	// Refresh the metric expiration.
 	metric.expire = time.Now().Add(p.cfg.ExpireDuration)
 
@@ -148,17 +146,18 @@ func (p *prometheusOutput) Collect(ch chan<- prometheus.Metric) {
 			labels = metric.slo.Output.Prometheus.Labels
 		}
 
-		ch <- p.getSLIErrorMetric(ns, slName, sloName, labels, metric.errorSum)
-		ch <- p.getSLICountMetric(ns, slName, sloName, labels, metric.countSum)
-		ch <- p.getSLOObjectiveMetric(ns, slName, sloName, labels, metric.objective)
+		p.collectSLIErrorMetric(ch, ns, slName, sloName, labels, metric.errorSum)
+		p.collectSLICountMetric(ch, ns, slName, sloName, labels, metric.countSum)
+		p.collectSLOObjectiveMetric(ch, ns, slName, sloName, labels, metric.slo)
+		p.collectSLOBurnRateMetrics(ch, ns, slName, sloName, labels, metric.slo)
 	}
 
 	// Collect all SLOs metric.
 	p.logger.Debugf("finished collecting all the service level metrics")
 }
 
-func (p *prometheusOutput) getSLIErrorMetric(ns, serviceLevel, slo string, constLabels prometheus.Labels, value float64) prometheus.Metric {
-	return prometheus.MustNewConstMetric(
+func (p *prometheusOutput) collectSLIErrorMetric(ch chan<- prometheus.Metric, ns, serviceLevel, slo string, constLabels prometheus.Labels, value float64) {
+	ch <- prometheus.MustNewConstMetric(
 		prometheus.NewDesc(
 			prometheus.BuildFQName(promNS, promSLISubsystem, "result_error_ratio_total"),
 			"Is the error or failure ratio of an SLI result.",
@@ -171,8 +170,8 @@ func (p *prometheusOutput) getSLIErrorMetric(ns, serviceLevel, slo string, const
 	)
 }
 
-func (p *prometheusOutput) getSLICountMetric(ns, serviceLevel, slo string, constLabels prometheus.Labels, value float64) prometheus.Metric {
-	return prometheus.MustNewConstMetric(
+func (p *prometheusOutput) collectSLICountMetric(ch chan<- prometheus.Metric, ns, serviceLevel, slo string, constLabels prometheus.Labels, value float64) {
+	ch <- prometheus.MustNewConstMetric(
 		prometheus.NewDesc(
 			prometheus.BuildFQName(promNS, promSLISubsystem, "result_count_total"),
 			"Is the number of times an SLI result has been processed.",
@@ -185,8 +184,11 @@ func (p *prometheusOutput) getSLICountMetric(ns, serviceLevel, slo string, const
 	)
 }
 
-func (p *prometheusOutput) getSLOObjectiveMetric(ns, serviceLevel, slo string, constLabels prometheus.Labels, value float64) prometheus.Metric {
-	return prometheus.MustNewConstMetric(
+func (p *prometheusOutput) collectSLOObjectiveMetric(ch chan<- prometheus.Metric, ns, serviceLevel, sloName string, constLabels prometheus.Labels, slo *measurev1alpha1.SLO) {
+	// Objective is in %  so we convert to ratio (0-1).
+	value := slo.AvailabilityObjectivePercent / 100
+
+	ch <- prometheus.MustNewConstMetric(
 		prometheus.NewDesc(
 			prometheus.BuildFQName(promNS, promSLOSubsystem, "objective_ratio"),
 			"Is the objective of the SLO in ratio unit.",
@@ -195,6 +197,37 @@ func (p *prometheusOutput) getSLOObjectiveMetric(ns, serviceLevel, slo string, c
 		),
 		prometheus.GaugeValue,
 		value,
-		ns, serviceLevel, slo,
+		ns, serviceLevel, sloName,
 	)
+}
+
+func (p *prometheusOutput) collectSLOBurnRateMetrics(ch chan<- prometheus.Metric, ns, serviceLevel, sloName string, constLabels prometheus.Labels, slo *measurev1alpha1.SLO) {
+	// For every burn rate on the SLO spec...
+	for _, burnRate := range slo.BurnRates {
+		brDays := fmt.Sprintf("%dd", burnRate.ErrorBudgetDays)
+
+		// Calculate the burn rate threshodls.
+		for _, threshold := range burnRate.Thresholds {
+			brThreshold := fmt.Sprintf("%dh", threshold.TimeRangeHours)
+			ebPerc := fmt.Sprintf("%d%%", threshold.ErrorBudgetPercent)
+
+			// Get the threshold value (use hours).
+			// Check SRE Workbook 5.4 (multivalue burn rates).
+			errorBudgetHours := float64(burnRate.ErrorBudgetDays * 24)
+			errorBudget := float64(threshold.ErrorBudgetPercent) / 100
+			value := errorBudgetHours * errorBudget / float64(threshold.TimeRangeHours)
+
+			ch <- prometheus.MustNewConstMetric(
+				prometheus.NewDesc(
+					prometheus.BuildFQName(promNS, promSLOBurnRateSubsystem, "threshold"),
+					"Is the threshold for a burn rate period.",
+					[]string{"namespace", "service_level", "slo", "total_error_budget_range", "burn_rate_range", "error_budget_spent"},
+					constLabels,
+				),
+				prometheus.GaugeValue,
+				value,
+				ns, serviceLevel, sloName, brDays, brThreshold, ebPerc,
+			)
+		}
+	}
 }

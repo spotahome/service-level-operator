@@ -29,6 +29,8 @@ import (
 
 func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenAPIDefinition {
 	return map[string]common.OpenAPIDefinition{
+		"github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1.BurnRate":               schema_pkg_apis_measure_v1alpha1_BurnRate(ref),
+		"github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1.BurnRateThreshold":      schema_pkg_apis_measure_v1alpha1_BurnRateThreshold(ref),
 		"github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1.Output":                 schema_pkg_apis_measure_v1alpha1_Output(ref),
 		"github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1.PrometheusOutputSource": schema_pkg_apis_measure_v1alpha1_PrometheusOutputSource(ref),
 		"github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1.PrometheusSLISource":    schema_pkg_apis_measure_v1alpha1_PrometheusSLISource(ref),
@@ -38,6 +40,67 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 		"github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1.ServiceLevel":           schema_pkg_apis_measure_v1alpha1_ServiceLevel(ref),
 		"github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1.ServiceLevelList":       schema_pkg_apis_measure_v1alpha1_ServiceLevelList(ref),
 		"github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1.ServiceLevelSpec":       schema_pkg_apis_measure_v1alpha1_ServiceLevelSpec(ref),
+	}
+}
+
+func schema_pkg_apis_measure_v1alpha1_BurnRate(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "BurnRate has the burn rate total window and it's thresholds.",
+				Properties: map[string]spec.Schema{
+					"errorBudgetDays": {
+						SchemaProps: spec.SchemaProps{
+							Description: "ErrorBudgetDays is the total days for the error budget.",
+							Type:        []string{"integer"},
+							Format:      "int32",
+						},
+					},
+					"thresholds": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Thresholds are the thresholds based on time for the burn rates.",
+							Type:        []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Ref: ref("github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1.BurnRateThreshold"),
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		Dependencies: []string{
+			"github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1.BurnRateThreshold"},
+	}
+}
+
+func schema_pkg_apis_measure_v1alpha1_BurnRateThreshold(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "BurnRateThreshold is the threshold of the max burn rate allowed.",
+				Properties: map[string]spec.Schema{
+					"timeRangeHours": {
+						SchemaProps: spec.SchemaProps{
+							Description: "TimeRangeHours is the time range for the burn rate threshold.",
+							Type:        []string{"integer"},
+							Format:      "int32",
+						},
+					},
+					"errorBudgetPercent": {
+						SchemaProps: spec.SchemaProps{
+							Description: "ErrorBudgetPercent is the error budget percent for this period.",
+							Type:        []string{"integer"},
+							Format:      "int32",
+						},
+					},
+				},
+			},
+		},
+		Dependencies: []string{},
 	}
 }
 
@@ -209,12 +272,25 @@ func schema_pkg_apis_measure_v1alpha1_SLO(ref common.ReferenceCallback) common.O
 							Ref:         ref("github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1.Output"),
 						},
 					},
+					"burnRates": {
+						SchemaProps: spec.SchemaProps{
+							Description: "BurnRates are the burn rates and erro budgeds of the SLO.",
+							Type:        []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Ref: ref("github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1.BurnRate"),
+									},
+								},
+							},
+						},
+					},
 				},
-				Required: []string{"name", "availabilityObjectivePercent", "serviceLevelIndicator", "output"},
+				Required: []string{"name", "availabilityObjectivePercent", "serviceLevelIndicator", "output", "burnRates"},
 			},
 		},
 		Dependencies: []string{
-			"github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1.Output", "github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1.SLI"},
+			"github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1.BurnRate", "github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1.Output", "github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1.SLI"},
 	}
 }
 

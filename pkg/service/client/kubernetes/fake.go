@@ -77,6 +77,24 @@ var (
 								},
 							},
 						},
+						BurnRates: []measurev1alpha1.BurnRate{
+							{
+								ErrorBudgetDays: 30,
+								Thresholds: []measurev1alpha1.BurnRateThreshold{
+									{TimeRangeHours: 1, ErrorBudgetPercent: 2},
+									{TimeRangeHours: 6, ErrorBudgetPercent: 5},
+									{TimeRangeHours: 72, ErrorBudgetPercent: 10},
+								},
+							},
+							{
+								ErrorBudgetDays: 70,
+								Thresholds: []measurev1alpha1.BurnRateThreshold{
+									{TimeRangeHours: 6, ErrorBudgetPercent: 3},
+									{TimeRangeHours: 24, ErrorBudgetPercent: 7},
+									{TimeRangeHours: 168, ErrorBudgetPercent: 10},
+								},
+							},
+						},
 					},
 					{
 						Name:                         "fake_slo1",
@@ -99,6 +117,16 @@ var (
 								},
 							},
 						},
+						BurnRates: []measurev1alpha1.BurnRate{
+							{
+								ErrorBudgetDays: 30,
+								Thresholds: []measurev1alpha1.BurnRateThreshold{
+									{TimeRangeHours: 1, ErrorBudgetPercent: 2},
+									{TimeRangeHours: 6, ErrorBudgetPercent: 5},
+									{TimeRangeHours: 72, ErrorBudgetPercent: 10},
+								},
+							},
+						},
 					},
 					{
 						Name:                         "fake_slo2",
@@ -118,6 +146,16 @@ var (
 								Labels: map[string]string{
 									"fake": "true",
 									"team": "fake-team2",
+								},
+							},
+						},
+						BurnRates: []measurev1alpha1.BurnRate{
+							{
+								ErrorBudgetDays: 30,
+								Thresholds: []measurev1alpha1.BurnRateThreshold{
+									{TimeRangeHours: 1, ErrorBudgetPercent: 2},
+									{TimeRangeHours: 6, ErrorBudgetPercent: 5},
+									{TimeRangeHours: 72, ErrorBudgetPercent: 10},
 								},
 							},
 						},

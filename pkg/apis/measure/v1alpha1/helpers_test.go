@@ -33,6 +33,17 @@ func TestServiceLevelValidation(t *testing.T) {
 					Output: measurev1alpha1.Output{
 						Prometheus: &measurev1alpha1.PrometheusOutputSource{},
 					},
+					BurnRates: []measurev1alpha1.BurnRate{
+						{
+							ErrorBudgetDays: 30,
+							Thresholds: []measurev1alpha1.BurnRateThreshold{
+								{
+									TimeRangeHours:     1,
+									ErrorBudgetPercent: 2,
+								},
+							},
+						},
+					},
 				},
 			},
 		},
@@ -47,6 +58,16 @@ func TestServiceLevelValidation(t *testing.T) {
 	slSLOWithoutSLI.Spec.ServiceLevelObjectives[0].ServiceLevelIndicator.Prometheus = nil
 	slSLOWithoutOutput := goodSL.DeepCopy()
 	slSLOWithoutOutput.Spec.ServiceLevelObjectives[0].Output.Prometheus = nil
+	slSLOSameMultipleBurnRates := goodSL.DeepCopy()
+	slSLOSameMultipleBurnRates.Spec.ServiceLevelObjectives[0].BurnRates = append(slSLOSameMultipleBurnRates.Spec.ServiceLevelObjectives[0].BurnRates, measurev1alpha1.BurnRate{
+		ErrorBudgetDays: 30,
+		Thresholds: []measurev1alpha1.BurnRateThreshold{
+			{
+				TimeRangeHours:     1,
+				ErrorBudgetPercent: 2,
+			},
+		},
+	})
 
 	tests := []struct {
 		name         string
@@ -81,6 +102,11 @@ func TestServiceLevelValidation(t *testing.T) {
 		{
 			name:         "A ServiceLevel with an SLO without output shouldn't be valid.",
 			serviceLevel: slSLOWithoutOutput,
+			expErr:       true,
+		},
+		{
+			name:         "A ServiceLevel with an SLO With repeated burn rates shouldn't be valid.",
+			serviceLevel: slSLOSameMultipleBurnRates,
 			expErr:       true,
 		},
 	}

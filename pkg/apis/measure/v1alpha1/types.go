@@ -45,6 +45,8 @@ type SLO struct {
 	ServiceLevelIndicator SLI `json:"serviceLevelIndicator"`
 	// Output is the output backedn of the SLO.
 	Output Output `json:"output"`
+	// BurnRates are the burn rates and erro budgeds of the SLO.
+	BurnRates []BurnRate `json:"burnRates"`
 }
 
 // SLI is the SLI to get for the SLO.
@@ -82,6 +84,22 @@ type PrometheusOutputSource struct {
 	// Labels are the labels that will be set to the output metrics of this SLO.
 	// +optional
 	Labels map[string]string `json:"labels,omitempty"`
+}
+
+// BurnRate has the burn rate total window and it's thresholds.
+type BurnRate struct {
+	// ErrorBudgetDays is the total days for the error budget.
+	ErrorBudgetDays int `json:"errorBudgetDays,omitempty"`
+	// Thresholds are the thresholds based on time for the burn rates.
+	Thresholds []BurnRateThreshold `json:"thresholds,omitempty"`
+}
+
+// BurnRateThreshold is the threshold of the max burn rate allowed.
+type BurnRateThreshold struct {
+	// TimeRangeHours is the time range for the burn rate threshold.
+	TimeRangeHours int `json:"timeRangeHours,omitempty"`
+	// ErrorBudgetPercent is the error budget percent for this period.
+	ErrorBudgetPercent int `json:"errorBudgetPercent,omitempty"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object

@@ -36,6 +36,16 @@ var (
 		Output: measurev1alpha1.Output{
 			Prometheus: &measurev1alpha1.PrometheusOutputSource{},
 		},
+		BurnRates: []measurev1alpha1.BurnRate{
+			{
+				ErrorBudgetDays: 30,
+				Thresholds: []measurev1alpha1.BurnRateThreshold{
+					{TimeRangeHours: 1, ErrorBudgetPercent: 2},
+					{TimeRangeHours: 6, ErrorBudgetPercent: 5},
+					{TimeRangeHours: 72, ErrorBudgetPercent: 10},
+				},
+			},
+		},
 	}
 	slo01 = &measurev1alpha1.SLO{
 		Name:                         "slo01-test",
@@ -85,6 +95,9 @@ func TestPrometheusOutput(t *testing.T) {
 				`service_level_sli_result_error_ratio_total{namespace="ns0",service_level="sl0-test",slo="slo00-test"} 0.000122`,
 				`service_level_sli_result_count_total{namespace="ns0",service_level="sl0-test",slo="slo00-test"} 1`,
 				`service_level_slo_objective_ratio{namespace="ns0",service_level="sl0-test",slo="slo00-test"} 0.9999899999999999`,
+				`service_level_slo_burn_rate_threshold{burn_rate_range="1h",error_budget_spent="2%",namespace="ns0",service_level="sl0-test",slo="slo00-test",total_error_budget_range="30d"} 14.4`,
+				`service_level_slo_burn_rate_threshold{burn_rate_range="6h",error_budget_spent="5%",namespace="ns0",service_level="sl0-test",slo="slo00-test",total_error_budget_range="30d"} 6`,
+				`service_level_slo_burn_rate_threshold{burn_rate_range="72h",error_budget_spent="10%",namespace="ns0",service_level="sl0-test",slo="slo00-test",total_error_budget_range="30d"} 1`,
 			},
 		},
 		{
@@ -103,6 +116,9 @@ func TestPrometheusOutput(t *testing.T) {
 				`service_level_sli_result_error_ratio_total{namespace="ns0",service_level="sl0-test",slo="slo00-test"} 0.000122`,
 				`service_level_sli_result_count_total{namespace="ns0",service_level="sl0-test",slo="slo00-test"} 1`,
 				`service_level_slo_objective_ratio{namespace="ns0",service_level="sl0-test",slo="slo00-test"} 0.9999899999999999`,
+				`service_level_slo_burn_rate_threshold{burn_rate_range="1h",error_budget_spent="2%",namespace="ns0",service_level="sl0-test",slo="slo00-test",total_error_budget_range="30d"} 14.4`,
+				`service_level_slo_burn_rate_threshold{burn_rate_range="6h",error_budget_spent="5%",namespace="ns0",service_level="sl0-test",slo="slo00-test",total_error_budget_range="30d"} 6`,
+				`service_level_slo_burn_rate_threshold{burn_rate_range="72h",error_budget_spent="10%",namespace="ns0",service_level="sl0-test",slo="slo00-test",total_error_budget_range="30d"} 1`,
 			},
 		},
 		{
@@ -126,6 +142,9 @@ func TestPrometheusOutput(t *testing.T) {
 				`service_level_sli_result_error_ratio_total{namespace="ns0",service_level="sl0-test",slo="slo00-test"} 2.112137520556389`,
 				`service_level_sli_result_count_total{namespace="ns0",service_level="sl0-test",slo="slo00-test"} 8`,
 				`service_level_slo_objective_ratio{namespace="ns0",service_level="sl0-test",slo="slo00-test"} 0.9999899999999999`,
+				`service_level_slo_burn_rate_threshold{burn_rate_range="1h",error_budget_spent="2%",namespace="ns0",service_level="sl0-test",slo="slo00-test",total_error_budget_range="30d"} 14.4`,
+				`service_level_slo_burn_rate_threshold{burn_rate_range="6h",error_budget_spent="5%",namespace="ns0",service_level="sl0-test",slo="slo00-test",total_error_budget_range="30d"} 6`,
+				`service_level_slo_burn_rate_threshold{burn_rate_range="72h",error_budget_spent="10%",namespace="ns0",service_level="sl0-test",slo="slo00-test",total_error_budget_range="30d"} 1`,
 			},
 		},
 		{

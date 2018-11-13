@@ -40,5 +40,16 @@ func (s *ServiceLevel) validateSLO(slo *SLO) error {
 		return fmt.Errorf("the %s SLO must have at least one output source", slo.Name)
 	}
 
+	// Check different burn rates appear only once.
+	brs := map[int]int{}
+	for _, br := range slo.BurnRates {
+		brs[br.ErrorBudgetDays]++
+	}
+	for _, v := range brs {
+		if v > 1 {
+			return fmt.Errorf("error budget can't be set more than once")
+		}
+	}
+
 	return nil
 }
