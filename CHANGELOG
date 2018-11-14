@@ -1,4 +1,4 @@
-## 0.x.x / 2018-x-xx
+## 0.2.0 / 2018-11-14
 
 This release breaks the CRD apiVersion and the current registered CRDs needs to be re registered with  `apiVersion: monitoring.spotahome.com/v1alpha1`.
 
