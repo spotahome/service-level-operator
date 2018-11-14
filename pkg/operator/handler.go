@@ -7,10 +7,10 @@ import (
 
 	"k8s.io/apimachinery/pkg/runtime"
 
-	measurev1alpha1 "github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1"
-	"github.com/slok/service-level-operator/pkg/log"
-	"github.com/slok/service-level-operator/pkg/service/output"
-	"github.com/slok/service-level-operator/pkg/service/sli"
+	monitoringv1alpha1 "github.com/spotahome/service-level-operator/pkg/apis/monitoring/v1alpha1"
+	"github.com/spotahome/service-level-operator/pkg/log"
+	"github.com/spotahome/service-level-operator/pkg/service/output"
+	"github.com/spotahome/service-level-operator/pkg/service/sli"
 )
 
 // Handler is the Operator handler.
@@ -31,7 +31,7 @@ func NewHandler(outputerFact output.Factory, retrieverFact sli.RetrieverFactory,
 
 // Add will ensure the the ci builds and jobs are persisted.
 func (h *Handler) Add(_ context.Context, obj runtime.Object) error {
-	sl, ok := obj.(*measurev1alpha1.ServiceLevel)
+	sl, ok := obj.(*monitoringv1alpha1.ServiceLevel)
 	if !ok {
 		return fmt.Errorf("can't handle received object, it's not a service level object")
 	}
@@ -65,7 +65,7 @@ func (h *Handler) Add(_ context.Context, obj runtime.Object) error {
 	return nil
 }
 
-func (h *Handler) processSLO(sl *measurev1alpha1.ServiceLevel, slo *measurev1alpha1.SLO) error {
+func (h *Handler) processSLO(sl *monitoringv1alpha1.ServiceLevel, slo *monitoringv1alpha1.SLO) error {
 	if slo.Disable {
 		h.logger.Debugf("ignoring SLO %s", slo.Name)
 		return nil

@@ -10,7 +10,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/slok/service-level-operator/pkg/service/metrics"
+	"github.com/spotahome/service-level-operator/pkg/service/metrics"
 )
 
 func TestPrometheusMetrics(t *testing.T) {

@@ -1,5 +1,9 @@
 ## 0.x.x / 2018-x-xx
 
+This release breaks the CRD apiVersion and the current registered CRDs needs to be re registered with  `apiVersion: monitoring.spotahome.com/v1alpha1`.
+
+* [CHANGE] Move CRD api from `apiVersion: measure.slok.xyz/v1alpha1` to `apiVersion: monitoring.spotahome.com/v1alpha1`.
+* [CHANGE] Move repository from github.com/slok/service-level-operator to github.com/spotahome/service-level-operator.
 * [FEATURE] Add Grafana dashboard.
 
 ## 0.1.0 / 2018-10-31

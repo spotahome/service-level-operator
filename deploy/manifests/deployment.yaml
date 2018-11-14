@@ -24,7 +24,7 @@ spec:
       containers:
         - name: app
           imagePullPolicy: Always
-          image: quay.io/slok/service-level-operator:latest
+          image: quay.io/spotahome/service-level-operator:latest
           ports:
             - containerPort: 8080
               name: http

@@ -3,7 +3,7 @@ package sli
 import (
 	"fmt"
 
-	measurev1alpha1 "github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1"
+	monitoringv1alpha1 "github.com/spotahome/service-level-operator/pkg/apis/monitoring/v1alpha1"
 )
 
 // Result is the result of getting a SLI from a backend.
@@ -52,5 +52,5 @@ func (r *Result) ErrorRatio() (float64, error) {
 // Retriever knows how to get SLIs from different backends.
 type Retriever interface {
 	// Retrieve returns the result of a SLI retrieved from the implemented backend.
-	Retrieve(*measurev1alpha1.SLI) (Result, error)
+	Retrieve(*monitoringv1alpha1.SLI) (Result, error)
 }

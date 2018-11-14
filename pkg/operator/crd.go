@@ -6,9 +6,9 @@ import (
 	"k8s.io/apimachinery/pkg/watch"
 	"k8s.io/client-go/tools/cache"
 
-	measurev1alpha1 "github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1"
-	"github.com/slok/service-level-operator/pkg/log"
-	"github.com/slok/service-level-operator/pkg/service/kubernetes"
+	monitoringv1alpha1 "github.com/spotahome/service-level-operator/pkg/apis/monitoring/v1alpha1"
+	"github.com/spotahome/service-level-operator/pkg/log"
+	"github.com/spotahome/service-level-operator/pkg/service/kubernetes"
 )
 
 // serviceLevelCRD is the crd release.
@@ -30,12 +30,12 @@ func newServiceLevelCRD(cfg Config, service kubernetes.Service, logger log.Logge
 // Initialize satisfies resource.crd interface.
 func (s *serviceLevelCRD) Initialize() error {
 	crd := kubernetes.CRDConf{
-		Kind:                    measurev1alpha1.ServiceLevelKind,
-		NamePlural:              measurev1alpha1.ServiceLevelNamePlural,
-		Group:                   measurev1alpha1.SchemeGroupVersion.Group,
-		Version:                 measurev1alpha1.SchemeGroupVersion.Version,
-		Scope:                   measurev1alpha1.ServiceLevelScope,
-		Categories:              []string{"measure", "slo"},
+		Kind:                    monitoringv1alpha1.ServiceLevelKind,
+		NamePlural:              monitoringv1alpha1.ServiceLevelNamePlural,
+		Group:                   monitoringv1alpha1.SchemeGroupVersion.Group,
+		Version:                 monitoringv1alpha1.SchemeGroupVersion.Version,
+		Scope:                   monitoringv1alpha1.ServiceLevelScope,
+		Categories:              []string{"monitoring", "slo"},
 		EnableStatusSubresource: true,
 	}
 
@@ -58,5 +58,5 @@ func (s *serviceLevelCRD) GetListerWatcher() cache.ListerWatcher {
 
 // GetObject satisfies resource.crd interface (and retrieve.Retriever).
 func (s *serviceLevelCRD) GetObject() runtime.Object {
-	return &measurev1alpha1.ServiceLevel{}
+	return &monitoringv1alpha1.ServiceLevel{}
 }

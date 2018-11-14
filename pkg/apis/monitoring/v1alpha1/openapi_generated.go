@@ -29,19 +29,19 @@ import (
 
 func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenAPIDefinition {
 	return map[string]common.OpenAPIDefinition{
-		"github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1.Output":                 schema_pkg_apis_measure_v1alpha1_Output(ref),
-		"github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1.PrometheusOutputSource": schema_pkg_apis_measure_v1alpha1_PrometheusOutputSource(ref),
-		"github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1.PrometheusSLISource":    schema_pkg_apis_measure_v1alpha1_PrometheusSLISource(ref),
-		"github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1.SLI":                    schema_pkg_apis_measure_v1alpha1_SLI(ref),
-		"github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1.SLISource":              schema_pkg_apis_measure_v1alpha1_SLISource(ref),
-		"github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1.SLO":                    schema_pkg_apis_measure_v1alpha1_SLO(ref),
-		"github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1.ServiceLevel":           schema_pkg_apis_measure_v1alpha1_ServiceLevel(ref),
-		"github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1.ServiceLevelList":       schema_pkg_apis_measure_v1alpha1_ServiceLevelList(ref),
-		"github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1.ServiceLevelSpec":       schema_pkg_apis_measure_v1alpha1_ServiceLevelSpec(ref),
+		"github.com/spotahome/service-level-operator/pkg/apis/monitoring/v1alpha1.Output":                 schema_pkg_apis_monitoring_v1alpha1_Output(ref),
+		"github.com/spotahome/service-level-operator/pkg/apis/monitoring/v1alpha1.PrometheusOutputSource": schema_pkg_apis_monitoring_v1alpha1_PrometheusOutputSource(ref),
+		"github.com/spotahome/service-level-operator/pkg/apis/monitoring/v1alpha1.PrometheusSLISource":    schema_pkg_apis_monitoring_v1alpha1_PrometheusSLISource(ref),
+		"github.com/spotahome/service-level-operator/pkg/apis/monitoring/v1alpha1.SLI":                    schema_pkg_apis_monitoring_v1alpha1_SLI(ref),
+		"github.com/spotahome/service-level-operator/pkg/apis/monitoring/v1alpha1.SLISource":              schema_pkg_apis_monitoring_v1alpha1_SLISource(ref),
+		"github.com/spotahome/service-level-operator/pkg/apis/monitoring/v1alpha1.SLO":                    schema_pkg_apis_monitoring_v1alpha1_SLO(ref),
+		"github.com/spotahome/service-level-operator/pkg/apis/monitoring/v1alpha1.ServiceLevel":           schema_pkg_apis_monitoring_v1alpha1_ServiceLevel(ref),
+		"github.com/spotahome/service-level-operator/pkg/apis/monitoring/v1alpha1.ServiceLevelList":       schema_pkg_apis_monitoring_v1alpha1_ServiceLevelList(ref),
+		"github.com/spotahome/service-level-operator/pkg/apis/monitoring/v1alpha1.ServiceLevelSpec":       schema_pkg_apis_monitoring_v1alpha1_ServiceLevelSpec(ref),
 	}
 }
 
-func schema_pkg_apis_measure_v1alpha1_Output(ref common.ReferenceCallback) common.OpenAPIDefinition {
+func schema_pkg_apis_monitoring_v1alpha1_Output(ref common.ReferenceCallback) common.OpenAPIDefinition {
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
 			SchemaProps: spec.SchemaProps{
@@ -50,18 +50,18 @@ func schema_pkg_apis_measure_v1alpha1_Output(ref common.ReferenceCallback) commo
 					"prometheus": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Prometheus is the prometheus format for the SLO output.",
-							Ref:         ref("github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1.PrometheusOutputSource"),
+							Ref:         ref("github.com/spotahome/service-level-operator/pkg/apis/monitoring/v1alpha1.PrometheusOutputSource"),
 						},
 					},
 				},
 			},
 		},
 		Dependencies: []string{
-			"github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1.PrometheusOutputSource"},
+			"github.com/spotahome/service-level-operator/pkg/apis/monitoring/v1alpha1.PrometheusOutputSource"},
 	}
 }
 
-func schema_pkg_apis_measure_v1alpha1_PrometheusOutputSource(ref common.ReferenceCallback) common.OpenAPIDefinition {
+func schema_pkg_apis_monitoring_v1alpha1_PrometheusOutputSource(ref common.ReferenceCallback) common.OpenAPIDefinition {
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
 			SchemaProps: spec.SchemaProps{
@@ -88,7 +88,7 @@ func schema_pkg_apis_measure_v1alpha1_PrometheusOutputSource(ref common.Referenc
 	}
 }
 
-func schema_pkg_apis_measure_v1alpha1_PrometheusSLISource(ref common.ReferenceCallback) common.OpenAPIDefinition {
+func schema_pkg_apis_monitoring_v1alpha1_PrometheusSLISource(ref common.ReferenceCallback) common.OpenAPIDefinition {
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
 			SchemaProps: spec.SchemaProps{
@@ -123,7 +123,7 @@ func schema_pkg_apis_measure_v1alpha1_PrometheusSLISource(ref common.ReferenceCa
 	}
 }
 
-func schema_pkg_apis_measure_v1alpha1_SLI(ref common.ReferenceCallback) common.OpenAPIDefinition {
+func schema_pkg_apis_monitoring_v1alpha1_SLI(ref common.ReferenceCallback) common.OpenAPIDefinition {
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
 			SchemaProps: spec.SchemaProps{
@@ -132,18 +132,18 @@ func schema_pkg_apis_measure_v1alpha1_SLI(ref common.ReferenceCallback) common.O
 					"prometheus": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Prometheus is the prometheus SLI source.",
-							Ref:         ref("github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1.PrometheusSLISource"),
+							Ref:         ref("github.com/spotahome/service-level-operator/pkg/apis/monitoring/v1alpha1.PrometheusSLISource"),
 						},
 					},
 				},
 			},
 		},
 		Dependencies: []string{
-			"github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1.PrometheusSLISource"},
+			"github.com/spotahome/service-level-operator/pkg/apis/monitoring/v1alpha1.PrometheusSLISource"},
 	}
 }
 
-func schema_pkg_apis_measure_v1alpha1_SLISource(ref common.ReferenceCallback) common.OpenAPIDefinition {
+func schema_pkg_apis_monitoring_v1alpha1_SLISource(ref common.ReferenceCallback) common.OpenAPIDefinition {
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
 			SchemaProps: spec.SchemaProps{
@@ -152,18 +152,18 @@ func schema_pkg_apis_measure_v1alpha1_SLISource(ref common.ReferenceCallback) co
 					"prometheus": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Prometheus is the prometheus SLI source.",
-							Ref:         ref("github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1.PrometheusSLISource"),
+							Ref:         ref("github.com/spotahome/service-level-operator/pkg/apis/monitoring/v1alpha1.PrometheusSLISource"),
 						},
 					},
 				},
 			},
 		},
 		Dependencies: []string{
-			"github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1.PrometheusSLISource"},
+			"github.com/spotahome/service-level-operator/pkg/apis/monitoring/v1alpha1.PrometheusSLISource"},
 	}
 }
 
-func schema_pkg_apis_measure_v1alpha1_SLO(ref common.ReferenceCallback) common.OpenAPIDefinition {
+func schema_pkg_apis_monitoring_v1alpha1_SLO(ref common.ReferenceCallback) common.OpenAPIDefinition {
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
 			SchemaProps: spec.SchemaProps{
@@ -200,13 +200,13 @@ func schema_pkg_apis_measure_v1alpha1_SLO(ref common.ReferenceCallback) common.O
 					"serviceLevelIndicator": {
 						SchemaProps: spec.SchemaProps{
 							Description: "ServiceLevelIndicator is the SLI associated with the SLO.",
-							Ref:         ref("github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1.SLI"),
+							Ref:         ref("github.com/spotahome/service-level-operator/pkg/apis/monitoring/v1alpha1.SLI"),
 						},
 					},
 					"output": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Output is the output backedn of the SLO.",
-							Ref:         ref("github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1.Output"),
+							Ref:         ref("github.com/spotahome/service-level-operator/pkg/apis/monitoring/v1alpha1.Output"),
 						},
 					},
 				},
@@ -214,11 +214,11 @@ func schema_pkg_apis_measure_v1alpha1_SLO(ref common.ReferenceCallback) common.O
 			},
 		},
 		Dependencies: []string{
-			"github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1.Output", "github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1.SLI"},
+			"github.com/spotahome/service-level-operator/pkg/apis/monitoring/v1alpha1.Output", "github.com/spotahome/service-level-operator/pkg/apis/monitoring/v1alpha1.SLI"},
 	}
 }
 
-func schema_pkg_apis_measure_v1alpha1_ServiceLevel(ref common.ReferenceCallback) common.OpenAPIDefinition {
+func schema_pkg_apis_monitoring_v1alpha1_ServiceLevel(ref common.ReferenceCallback) common.OpenAPIDefinition {
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
 			SchemaProps: spec.SchemaProps{
@@ -247,18 +247,18 @@ func schema_pkg_apis_measure_v1alpha1_ServiceLevel(ref common.ReferenceCallback)
 					"spec": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Specification of the ddesired behaviour of the pod terminator. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status",
-							Ref:         ref("github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1.ServiceLevelSpec"),
+							Ref:         ref("github.com/spotahome/service-level-operator/pkg/apis/monitoring/v1alpha1.ServiceLevelSpec"),
 						},
 					},
 				},
 			},
 		},
 		Dependencies: []string{
-			"github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1.ServiceLevelSpec", "k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta"},
+			"github.com/spotahome/service-level-operator/pkg/apis/monitoring/v1alpha1.ServiceLevelSpec", "k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta"},
 	}
 }
 
-func schema_pkg_apis_measure_v1alpha1_ServiceLevelList(ref common.ReferenceCallback) common.OpenAPIDefinition {
+func schema_pkg_apis_monitoring_v1alpha1_ServiceLevelList(ref common.ReferenceCallback) common.OpenAPIDefinition {
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
 			SchemaProps: spec.SchemaProps{
@@ -289,7 +289,7 @@ func schema_pkg_apis_measure_v1alpha1_ServiceLevelList(ref common.ReferenceCallb
 							Items: &spec.SchemaOrArray{
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
-										Ref: ref("github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1.ServiceLevel"),
+										Ref: ref("github.com/spotahome/service-level-operator/pkg/apis/monitoring/v1alpha1.ServiceLevel"),
 									},
 								},
 							},
@@ -300,11 +300,11 @@ func schema_pkg_apis_measure_v1alpha1_ServiceLevelList(ref common.ReferenceCallb
 			},
 		},
 		Dependencies: []string{
-			"github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1.ServiceLevel", "k8s.io/apimachinery/pkg/apis/meta/v1.ListMeta"},
+			"github.com/spotahome/service-level-operator/pkg/apis/monitoring/v1alpha1.ServiceLevel", "k8s.io/apimachinery/pkg/apis/meta/v1.ListMeta"},
 	}
 }
 
-func schema_pkg_apis_measure_v1alpha1_ServiceLevelSpec(ref common.ReferenceCallback) common.OpenAPIDefinition {
+func schema_pkg_apis_monitoring_v1alpha1_ServiceLevelSpec(ref common.ReferenceCallback) common.OpenAPIDefinition {
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
 			SchemaProps: spec.SchemaProps{
@@ -317,7 +317,7 @@ func schema_pkg_apis_measure_v1alpha1_ServiceLevelSpec(ref common.ReferenceCallb
 							Items: &spec.SchemaOrArray{
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
-										Ref: ref("github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1.SLO"),
+										Ref: ref("github.com/spotahome/service-level-operator/pkg/apis/monitoring/v1alpha1.SLO"),
 									},
 								},
 							},
@@ -327,6 +327,6 @@ func schema_pkg_apis_measure_v1alpha1_ServiceLevelSpec(ref common.ReferenceCallb
 			},
 		},
 		Dependencies: []string{
-			"github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1.SLO"},
+			"github.com/spotahome/service-level-operator/pkg/apis/monitoring/v1alpha1.SLO"},
 	}
 }

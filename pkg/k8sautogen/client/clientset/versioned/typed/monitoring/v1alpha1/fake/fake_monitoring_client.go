@@ -19,22 +19,22 @@ limitations under the License.
 package fake
 
 import (
-	v1alpha1 "github.com/slok/service-level-operator/pkg/k8sautogen/client/clientset/versioned/typed/measure/v1alpha1"
+	v1alpha1 "github.com/spotahome/service-level-operator/pkg/k8sautogen/client/clientset/versioned/typed/monitoring/v1alpha1"
 	rest "k8s.io/client-go/rest"
 	testing "k8s.io/client-go/testing"
 )
 
-type FakeMeasureV1alpha1 struct {
+type FakeMonitoringV1alpha1 struct {
 	*testing.Fake
 }
 
-func (c *FakeMeasureV1alpha1) ServiceLevels(namespace string) v1alpha1.ServiceLevelInterface {
+func (c *FakeMonitoringV1alpha1) ServiceLevels(namespace string) v1alpha1.ServiceLevelInterface {
 	return &FakeServiceLevels{c, namespace}
 }
 
 // RESTClient returns a RESTClient that is used to communicate
 // with API server by this client implementation.
-func (c *FakeMeasureV1alpha1) RESTClient() rest.Interface {
+func (c *FakeMonitoringV1alpha1) RESTClient() rest.Interface {
 	var ret *rest.RESTClient
 	return ret
 }

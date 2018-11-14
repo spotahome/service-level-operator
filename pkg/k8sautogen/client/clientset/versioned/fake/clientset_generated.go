@@ -19,9 +19,9 @@ limitations under the License.
 package fake
 
 import (
-	clientset "github.com/slok/service-level-operator/pkg/k8sautogen/client/clientset/versioned"
-	measurev1alpha1 "github.com/slok/service-level-operator/pkg/k8sautogen/client/clientset/versioned/typed/measure/v1alpha1"
-	fakemeasurev1alpha1 "github.com/slok/service-level-operator/pkg/k8sautogen/client/clientset/versioned/typed/measure/v1alpha1/fake"
+	clientset "github.com/spotahome/service-level-operator/pkg/k8sautogen/client/clientset/versioned"
+	monitoringv1alpha1 "github.com/spotahome/service-level-operator/pkg/k8sautogen/client/clientset/versioned/typed/monitoring/v1alpha1"
+	fakemonitoringv1alpha1 "github.com/spotahome/service-level-operator/pkg/k8sautogen/client/clientset/versioned/typed/monitoring/v1alpha1/fake"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/watch"
 	"k8s.io/client-go/discovery"
@@ -70,12 +70,12 @@ func (c *Clientset) Discovery() discovery.DiscoveryInterface {
 
 var _ clientset.Interface = &Clientset{}
 
-// MeasureV1alpha1 retrieves the MeasureV1alpha1Client
-func (c *Clientset) MeasureV1alpha1() measurev1alpha1.MeasureV1alpha1Interface {
-	return &fakemeasurev1alpha1.FakeMeasureV1alpha1{Fake: &c.Fake}
+// MonitoringV1alpha1 retrieves the MonitoringV1alpha1Client
+func (c *Clientset) MonitoringV1alpha1() monitoringv1alpha1.MonitoringV1alpha1Interface {
+	return &fakemonitoringv1alpha1.FakeMonitoringV1alpha1{Fake: &c.Fake}
 }
 
-// Measure retrieves the MeasureV1alpha1Client
-func (c *Clientset) Measure() measurev1alpha1.MeasureV1alpha1Interface {
-	return &fakemeasurev1alpha1.FakeMeasureV1alpha1{Fake: &c.Fake}
+// Monitoring retrieves the MonitoringV1alpha1Client
+func (c *Clientset) Monitoring() monitoringv1alpha1.MonitoringV1alpha1Interface {
+	return &fakemonitoringv1alpha1.FakeMonitoringV1alpha1{Fake: &c.Fake}
 }

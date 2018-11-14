@@ -8,7 +8,7 @@ import (
 
 	"k8s.io/client-go/util/homedir"
 
-	"github.com/slok/service-level-operator/pkg/operator"
+	"github.com/spotahome/service-level-operator/pkg/operator"
 )
 
 // defaults

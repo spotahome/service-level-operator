@@ -3,14 +3,14 @@ package output
 import (
 	"fmt"
 
-	measurev1alpha1 "github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1"
+	monitoringv1alpha1 "github.com/spotahome/service-level-operator/pkg/apis/monitoring/v1alpha1"
 )
 
 // Factory is a factory that knows how to get the correct
 // Output strategy based on the SLO output source.
 type Factory interface {
 	// GetGetStrategy returns a output based on the SLO source.
-	GetStrategy(*measurev1alpha1.SLO) (Output, error)
+	GetStrategy(*monitoringv1alpha1.SLO) (Output, error)
 }
 
 // factory doesn't create objects per se, it only knows
@@ -27,7 +27,7 @@ func NewFactory(promOutput Output) Factory {
 }
 
 // GetStrategy satsifies OutputFactory interface.
-func (f factory) GetStrategy(s *measurev1alpha1.SLO) (Output, error) {
+func (f factory) GetStrategy(s *monitoringv1alpha1.SLO) (Output, error) {
 	if s.Output.Prometheus != nil {
 		return f.promOutput, nil
 	}
@@ -41,6 +41,6 @@ type MockFactory struct {
 }
 
 // GetStrategy satisfies Factory interface.
-func (m MockFactory) GetStrategy(_ *measurev1alpha1.SLO) (Output, error) {
+func (m MockFactory) GetStrategy(_ *monitoringv1alpha1.SLO) (Output, error) {
 	return m.Mock, nil
 }

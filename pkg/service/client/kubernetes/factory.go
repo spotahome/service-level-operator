@@ -5,7 +5,7 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 
-	crdcli "github.com/slok/service-level-operator/pkg/k8sautogen/client/clientset/versioned"
+	crdcli "github.com/spotahome/service-level-operator/pkg/k8sautogen/client/clientset/versioned"
 )
 
 // ClientFactory knows how to get Kubernetes clients.

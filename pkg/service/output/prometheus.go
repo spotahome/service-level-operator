@@ -7,9 +7,9 @@ import (
 
 	"github.com/prometheus/client_golang/prometheus"
 
-	measurev1alpha1 "github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1"
-	"github.com/slok/service-level-operator/pkg/log"
-	"github.com/slok/service-level-operator/pkg/service/sli"
+	monitoringv1alpha1 "github.com/spotahome/service-level-operator/pkg/apis/monitoring/v1alpha1"
+	"github.com/spotahome/service-level-operator/pkg/log"
+	"github.com/spotahome/service-level-operator/pkg/service/sli"
 )
 
 const (
@@ -23,8 +23,8 @@ const (
 // of the metrics so when the collector is called it creates
 // the metrics based on this values.
 type metricValue struct {
-	serviceLevel *measurev1alpha1.ServiceLevel
-	slo          *measurev1alpha1.SLO
+	serviceLevel *monitoringv1alpha1.ServiceLevel
+	slo          *monitoringv1alpha1.SLO
 	errorSum     float64
 	countSum     float64
 	objective    float64
@@ -85,7 +85,7 @@ func NewPrometheus(cfg PrometheusCfg, reg prometheus.Registerer, logger log.Logg
 
 // Create satisfies output interface. By setting the correct values on the different
 // metrics of the SLO.
-func (p *prometheusOutput) Create(serviceLevel *measurev1alpha1.ServiceLevel, slo *measurev1alpha1.SLO, result *sli.Result) error {
+func (p *prometheusOutput) Create(serviceLevel *monitoringv1alpha1.ServiceLevel, slo *monitoringv1alpha1.SLO, result *sli.Result) error {
 	p.metricValuesMu.Lock()
 	defer p.metricValuesMu.Unlock()
 

@@ -19,8 +19,8 @@ limitations under the License.
 package v1alpha1
 
 import (
-	v1alpha1 "github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1"
-	scheme "github.com/slok/service-level-operator/pkg/k8sautogen/client/clientset/versioned/scheme"
+	v1alpha1 "github.com/spotahome/service-level-operator/pkg/apis/monitoring/v1alpha1"
+	scheme "github.com/spotahome/service-level-operator/pkg/k8sautogen/client/clientset/versioned/scheme"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
 	watch "k8s.io/apimachinery/pkg/watch"
@@ -53,7 +53,7 @@ type serviceLevels struct {
 }
 
 // newServiceLevels returns a ServiceLevels
-func newServiceLevels(c *MeasureV1alpha1Client, namespace string) *serviceLevels {
+func newServiceLevels(c *MonitoringV1alpha1Client, namespace string) *serviceLevels {
 	return &serviceLevels{
 		client: c.RESTClient(),
 		ns:     namespace,

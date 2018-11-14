@@ -10,9 +10,9 @@ import (
 	promv1 "github.com/prometheus/client_golang/api/prometheus/v1"
 	"github.com/prometheus/common/model"
 
-	measurev1alpha1 "github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1"
-	"github.com/slok/service-level-operator/pkg/log"
-	promcli "github.com/slok/service-level-operator/pkg/service/client/prometheus"
+	monitoringv1alpha1 "github.com/spotahome/service-level-operator/pkg/apis/monitoring/v1alpha1"
+	"github.com/spotahome/service-level-operator/pkg/log"
+	promcli "github.com/spotahome/service-level-operator/pkg/service/client/prometheus"
 )
 
 const promCliTimeout = 2 * time.Second
@@ -32,7 +32,7 @@ func NewPrometheus(promCliFactory promcli.ClientFactory, logger log.Logger) Retr
 }
 
 // Retrieve satisfies Service interface..
-func (p *prometheus) Retrieve(sli *measurev1alpha1.SLI) (Result, error) {
+func (p *prometheus) Retrieve(sli *monitoringv1alpha1.SLI) (Result, error) {
 	cli, err := p.cliFactory.GetV1APIClient(sli.Prometheus.Address)
 	if err != nil {
 		return Result{}, err
