@@ -4,8 +4,8 @@ import (
 	apiextensionscli "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
 	"k8s.io/client-go/kubernetes"
 
-	crdcli "github.com/slok/service-level-operator/pkg/k8sautogen/client/clientset/versioned"
-	"github.com/slok/service-level-operator/pkg/log"
+	crdcli "github.com/spotahome/service-level-operator/pkg/k8sautogen/client/clientset/versioned"
+	"github.com/spotahome/service-level-operator/pkg/log"
 )
 
 // Service is the service used to interact with the Kubernetes

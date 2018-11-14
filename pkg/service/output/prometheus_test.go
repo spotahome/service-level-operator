@@ -11,51 +11,51 @@ import (
 	"github.com/stretchr/testify/assert"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	measurev1alpha1 "github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1"
-	"github.com/slok/service-level-operator/pkg/log"
-	"github.com/slok/service-level-operator/pkg/service/output"
-	"github.com/slok/service-level-operator/pkg/service/sli"
+	monitoringv1alpha1 "github.com/spotahome/service-level-operator/pkg/apis/monitoring/v1alpha1"
+	"github.com/spotahome/service-level-operator/pkg/log"
+	"github.com/spotahome/service-level-operator/pkg/service/output"
+	"github.com/spotahome/service-level-operator/pkg/service/sli"
 )
 
 var (
-	sl0 = &measurev1alpha1.ServiceLevel{
+	sl0 = &monitoringv1alpha1.ServiceLevel{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "sl0-test",
 			Namespace: "ns0",
 		},
 	}
-	sl1 = &measurev1alpha1.ServiceLevel{
+	sl1 = &monitoringv1alpha1.ServiceLevel{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "sl1-test",
 			Namespace: "ns1",
 		},
 	}
-	slo00 = &measurev1alpha1.SLO{
+	slo00 = &monitoringv1alpha1.SLO{
 		Name:                         "slo00-test",
 		AvailabilityObjectivePercent: 99.999,
-		Output: measurev1alpha1.Output{
-			Prometheus: &measurev1alpha1.PrometheusOutputSource{},
+		Output: monitoringv1alpha1.Output{
+			Prometheus: &monitoringv1alpha1.PrometheusOutputSource{},
 		},
 	}
-	slo01 = &measurev1alpha1.SLO{
+	slo01 = &monitoringv1alpha1.SLO{
 		Name:                         "slo01-test",
 		AvailabilityObjectivePercent: 99.98,
-		Output: measurev1alpha1.Output{
-			Prometheus: &measurev1alpha1.PrometheusOutputSource{},
+		Output: monitoringv1alpha1.Output{
+			Prometheus: &monitoringv1alpha1.PrometheusOutputSource{},
 		},
 	}
-	slo10 = &measurev1alpha1.SLO{
+	slo10 = &monitoringv1alpha1.SLO{
 		Name:                         "slo10-test",
 		AvailabilityObjectivePercent: 99.99978,
-		Output: measurev1alpha1.Output{
-			Prometheus: &measurev1alpha1.PrometheusOutputSource{},
+		Output: monitoringv1alpha1.Output{
+			Prometheus: &monitoringv1alpha1.PrometheusOutputSource{},
 		},
 	}
-	slo11 = &measurev1alpha1.SLO{
+	slo11 = &monitoringv1alpha1.SLO{
 		Name:                         "slo11-test",
 		AvailabilityObjectivePercent: 95.9981,
-		Output: measurev1alpha1.Output{
-			Prometheus: &measurev1alpha1.PrometheusOutputSource{
+		Output: monitoringv1alpha1.Output{
+			Prometheus: &monitoringv1alpha1.PrometheusOutputSource{
 				Labels: map[string]string{
 					"env":  "test",
 					"team": "team1",

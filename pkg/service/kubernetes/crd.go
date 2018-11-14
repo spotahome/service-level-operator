@@ -4,7 +4,7 @@ import (
 	koopercrd "github.com/spotahome/kooper/client/crd"
 	apiextensionscli "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
 
-	"github.com/slok/service-level-operator/pkg/log"
+	"github.com/spotahome/service-level-operator/pkg/log"
 )
 
 // CRDConf is the configuration of the crd.

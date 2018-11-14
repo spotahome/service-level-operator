@@ -15,7 +15,7 @@ For this example the output and input backend will be [Prometheus].
 First you will need to define a CRD with your service SLI & SLOs. In this case we have a service that has an SLO on 99.99 availability, and the SLI is that 5xx are considered errors.
 
 ```yaml
-apiVersion: measure.slok.xyz/v1alpha1
+apiVersion: monitoring.spotahome.com/v1alpha1
 kind: ServiceLevel
 metadata:
   name: awesome-service
@@ -220,9 +220,9 @@ This alert will trigger if the error budget consumed in 1h is greater than the 2
 
 | SLO monthly budget burned | time range | burn rate to consume this percentage |
 | ------------------------- | ---------- | ------------------------------------ |
-| 2%                        | 1h         | 730 * 2 / 100 = 14.6                 |
-| 5%                        | 6h         | 730 / 6 * 5 / 100  = 6               |
-| 10%                       | 3d         | 30 / 3 * 10 / 100  = 1               |
+| 2%                        | 1h         | 730 \* 2 / 100 = 14.6                |
+| 5%                        | 6h         | 730 / 6 \* 5 / 100 = 6               |
+| 10%                       | 3d         | 30 / 3 \* 10 / 100 = 1               |
 
 ### Multiwindow, Multi-Burn-Rate Alerts (SRE workbook)
 
@@ -232,12 +232,12 @@ Our previous alerts could happen that a big error rate peak in 5m could be enoug
 
 Check the alert [here][multiwindow-alert]
 
-[travis-image]: https://travis-ci.org/slok/service-level-operator.svg?branch=master
-[travis-url]: https://travis-ci.org/slok/service-level-operator
-[goreport-image]: https://goreportcard.com/badge/github.com/slok/service-level-operator
-[goreport-url]: https://goreportcard.com/report/github.com/slok/service-level-operator
-[quay-image]: https://quay.io/repository/slok/service-level-operator/status
-[quay-url]: https://quay.io/repository/slok/service-level-operator
+[travis-image]: https://travis-ci.org/spotahome/service-level-operator.svg?branch=master
+[travis-url]: https://travis-ci.org/spotahome/service-level-operator
+[goreport-image]: https://goreportcard.com/badge/github.com/spotahome/service-level-operator
+[goreport-url]: https://goreportcard.com/report/github.com/spotahome/service-level-operator
+[quay-image]: https://quay.io/repository/spotahome/service-level-operator/status
+[quay-url]: https://quay.io/repository/spotahome/service-level-operator
 [sre-book-slo]: https://landing.google.com/sre/book/chapters/service-level-objectives.html
 [prometheus]: https://prometheus.io/
 [grafana-dashboard]: https://grafana.com/dashboards/8793

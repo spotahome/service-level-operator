@@ -6,39 +6,39 @@ import (
 	"github.com/stretchr/testify/assert"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	measurev1alpha1 "github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1"
+	monitoringv1alpha1 "github.com/spotahome/service-level-operator/pkg/apis/monitoring/v1alpha1"
 )
 
 func TestServiceLevelValidation(t *testing.T) {
 	// Setup the different combinations of service level to validate.
-	goodSL := &measurev1alpha1.ServiceLevel{
+	goodSL := &monitoringv1alpha1.ServiceLevel{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "fake-service0",
 		},
-		Spec: measurev1alpha1.ServiceLevelSpec{
-			ServiceLevelObjectives: []measurev1alpha1.SLO{
+		Spec: monitoringv1alpha1.ServiceLevelSpec{
+			ServiceLevelObjectives: []monitoringv1alpha1.SLO{
 				{
 					Name:                         "fake_slo0",
 					Description:                  "fake slo 0.",
 					AvailabilityObjectivePercent: 99.99,
-					ServiceLevelIndicator: measurev1alpha1.SLI{
-						SLISource: measurev1alpha1.SLISource{
-							Prometheus: &measurev1alpha1.PrometheusSLISource{
+					ServiceLevelIndicator: monitoringv1alpha1.SLI{
+						SLISource: monitoringv1alpha1.SLISource{
+							Prometheus: &monitoringv1alpha1.PrometheusSLISource{
 								Address:    "http://fake:9090",
 								TotalQuery: `slo0_total`,
 								ErrorQuery: `slo0_error`,
 							},
 						},
 					},
-					Output: measurev1alpha1.Output{
-						Prometheus: &measurev1alpha1.PrometheusOutputSource{},
+					Output: monitoringv1alpha1.Output{
+						Prometheus: &monitoringv1alpha1.PrometheusOutputSource{},
 					},
 				},
 			},
 		},
 	}
 	slWithoutSLO := goodSL.DeepCopy()
-	slWithoutSLO.Spec.ServiceLevelObjectives = []measurev1alpha1.SLO{}
+	slWithoutSLO.Spec.ServiceLevelObjectives = []monitoringv1alpha1.SLO{}
 	slSLOWithoutName := goodSL.DeepCopy()
 	slSLOWithoutName.Spec.ServiceLevelObjectives[0].Name = ""
 	slSLOWithoutObjective := goodSL.DeepCopy()
@@ -50,7 +50,7 @@ func TestServiceLevelValidation(t *testing.T) {
 
 	tests := []struct {
 		name         string
-		serviceLevel *measurev1alpha1.ServiceLevel
+		serviceLevel *monitoringv1alpha1.ServiceLevel
 		expErr       bool
 	}{
 		{

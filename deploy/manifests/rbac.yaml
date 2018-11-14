@@ -25,7 +25,7 @@ rules:
 
   # Operator logic.
   - apiGroups:
-      - measure.slok.xyz
+      - monitoring.spotahome.com
     resources:
       - servicelevels
       - servicelevels/status

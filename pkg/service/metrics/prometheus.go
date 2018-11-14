@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
-	measurev1alpha1 "github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1"
+	monitoringv1alpha1 "github.com/spotahome/service-level-operator/pkg/apis/monitoring/v1alpha1"
 )
 
 const (
@@ -26,7 +26,7 @@ type prometheusService struct {
 }
 
 // NewPrometheus returns a new metrics.Service implementation that
-// knows how to measureusing Prometheus as backend.
+// knows how to monitor gusing Prometheus as backend.
 func NewPrometheus(reg prometheus.Registerer) Service {
 	p := &prometheusService{
 		sliRetrieveHistogram: prometheus.NewHistogramVec(prometheus.HistogramOpts{
@@ -77,21 +77,21 @@ func (p prometheusService) registerMetrics() {
 }
 
 // ObserveSLIRetrieveDuration satisfies metrics.Service interface.
-func (p prometheusService) ObserveSLIRetrieveDuration(_ *measurev1alpha1.SLI, kind string, startTime time.Time) {
+func (p prometheusService) ObserveSLIRetrieveDuration(_ *monitoringv1alpha1.SLI, kind string, startTime time.Time) {
 	p.sliRetrieveHistogram.WithLabelValues(kind).Observe(time.Since(startTime).Seconds())
 }
 
 // IncSLIRetrieveError satisfies metrics.Service interface.
-func (p prometheusService) IncSLIRetrieveError(_ *measurev1alpha1.SLI, kind string) {
+func (p prometheusService) IncSLIRetrieveError(_ *monitoringv1alpha1.SLI, kind string) {
 	p.sliRetrieveErrCounter.WithLabelValues(kind).Inc()
 }
 
 // ObserveOuputCreateDuration satisfies metrics.Service interface.
-func (p prometheusService) ObserveOuputCreateDuration(_ *measurev1alpha1.SLO, kind string, startTime time.Time) {
+func (p prometheusService) ObserveOuputCreateDuration(_ *monitoringv1alpha1.SLO, kind string, startTime time.Time) {
 	p.outputCreateHistogram.WithLabelValues(kind).Observe(time.Since(startTime).Seconds())
 }
 
 // IncOuputCreateError satisfies metrics.Service interface.
-func (p prometheusService) IncOuputCreateError(_ *measurev1alpha1.SLO, kind string) {
+func (p prometheusService) IncOuputCreateError(_ *monitoringv1alpha1.SLO, kind string) {
 	p.outputCreateErrCounter.WithLabelValues(kind).Inc()
 }

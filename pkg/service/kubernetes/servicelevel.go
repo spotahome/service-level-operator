@@ -4,16 +4,16 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/watch"
 
-	measurev1alpha1 "github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1"
-	crdcli "github.com/slok/service-level-operator/pkg/k8sautogen/client/clientset/versioned"
-	"github.com/slok/service-level-operator/pkg/log"
+	monitoringv1alpha1 "github.com/spotahome/service-level-operator/pkg/apis/monitoring/v1alpha1"
+	crdcli "github.com/spotahome/service-level-operator/pkg/k8sautogen/client/clientset/versioned"
+	"github.com/spotahome/service-level-operator/pkg/log"
 )
 
 // ServiceLevel knows how to interact with Kubernetes on the
 // ServiceLevel CRs
 type ServiceLevel interface {
 	// ListServiceLevels will list the service levels.
-	ListServiceLevels(namespace string, opts metav1.ListOptions) (*measurev1alpha1.ServiceLevelList, error)
+	ListServiceLevels(namespace string, opts metav1.ListOptions) (*monitoringv1alpha1.ServiceLevelList, error)
 	// ListServiceLevels will list the service levels.
 	WatchServiceLevels(namespace string, opt metav1.ListOptions) (watch.Interface, error)
 }
@@ -31,9 +31,9 @@ func NewServiceLevel(crdcli crdcli.Interface, logger log.Logger) ServiceLevel {
 	}
 }
 
-func (s *serviceLevel) ListServiceLevels(namespace string, opts metav1.ListOptions) (*measurev1alpha1.ServiceLevelList, error) {
-	return s.cli.MeasureV1alpha1().ServiceLevels(namespace).List(opts)
+func (s *serviceLevel) ListServiceLevels(namespace string, opts metav1.ListOptions) (*monitoringv1alpha1.ServiceLevelList, error) {
+	return s.cli.MonitoringV1alpha1().ServiceLevels(namespace).List(opts)
 }
 func (s *serviceLevel) WatchServiceLevels(namespace string, opts metav1.ListOptions) (watch.Interface, error) {
-	return s.cli.MeasureV1alpha1().ServiceLevels(namespace).Watch(opts)
+	return s.cli.MonitoringV1alpha1().ServiceLevels(namespace).Watch(opts)
 }

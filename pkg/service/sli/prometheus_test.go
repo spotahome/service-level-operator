@@ -8,17 +8,17 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
-	mpromv1 "github.com/slok/service-level-operator/mocks/github.com/prometheus/client_golang/api/prometheus/v1"
-	measurev1alpha1 "github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1"
-	"github.com/slok/service-level-operator/pkg/log"
-	prometheusvc "github.com/slok/service-level-operator/pkg/service/client/prometheus"
-	"github.com/slok/service-level-operator/pkg/service/sli"
+	mpromv1 "github.com/spotahome/service-level-operator/mocks/github.com/prometheus/client_golang/api/prometheus/v1"
+	monitoringv1alpha1 "github.com/spotahome/service-level-operator/pkg/apis/monitoring/v1alpha1"
+	"github.com/spotahome/service-level-operator/pkg/log"
+	prometheusvc "github.com/spotahome/service-level-operator/pkg/service/client/prometheus"
+	"github.com/spotahome/service-level-operator/pkg/service/sli"
 )
 
 func TestPrometheusRetrieve(t *testing.T) {
-	sli0 := &measurev1alpha1.SLI{
-		SLISource: measurev1alpha1.SLISource{
-			Prometheus: &measurev1alpha1.PrometheusSLISource{
+	sli0 := &monitoringv1alpha1.SLI{
+		SLISource: monitoringv1alpha1.SLISource{
+			Prometheus: &monitoringv1alpha1.PrometheusSLISource{
 				TotalQuery: "test_total_query",
 				ErrorQuery: "test_error_query",
 			},
@@ -39,7 +39,7 @@ func TestPrometheusRetrieve(t *testing.T) {
 
 	tests := []struct {
 		name string
-		sli  *measurev1alpha1.SLI
+		sli  *monitoringv1alpha1.SLI
 
 		totalQueryResult model.Value
 		totalQueryErr    error

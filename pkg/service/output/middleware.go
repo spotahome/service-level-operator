@@ -3,12 +3,12 @@ package output
 import (
 	"time"
 
-	measurev1alpha1 "github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1"
-	"github.com/slok/service-level-operator/pkg/service/metrics"
-	"github.com/slok/service-level-operator/pkg/service/sli"
+	monitoringv1alpha1 "github.com/spotahome/service-level-operator/pkg/apis/monitoring/v1alpha1"
+	"github.com/spotahome/service-level-operator/pkg/service/metrics"
+	"github.com/spotahome/service-level-operator/pkg/service/sli"
 )
 
-// metricsMiddleware will measure the calls to the SLO output.
+// metricsMiddleware will monitoring the calls to the SLO output.
 type metricsMiddleware struct {
 	kind       string
 	metricssvc metrics.Service
@@ -16,7 +16,7 @@ type metricsMiddleware struct {
 }
 
 // NewMetricsMiddleware returns a new metrics middleware that wraps a Output SLO
-// service and measures with metrics.
+// service and monitorings with metrics.
 func NewMetricsMiddleware(metricssvc metrics.Service, kind string, next Output) Output {
 	return metricsMiddleware{
 		kind:       kind,
@@ -26,7 +26,7 @@ func NewMetricsMiddleware(metricssvc metrics.Service, kind string, next Output) 
 }
 
 // Create satisfies slo.Output interface.
-func (m metricsMiddleware) Create(serviceLevel *measurev1alpha1.ServiceLevel, slo *measurev1alpha1.SLO, result *sli.Result) (err error) {
+func (m metricsMiddleware) Create(serviceLevel *monitoringv1alpha1.ServiceLevel, slo *monitoringv1alpha1.SLO, result *sli.Result) (err error) {
 	defer func(t time.Time) {
 		m.metricssvc.ObserveOuputCreateDuration(slo, m.kind, t)
 		if err != nil {

@@ -8,98 +8,98 @@ import (
 	"github.com/stretchr/testify/mock"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	moutput "github.com/slok/service-level-operator/mocks/service/output"
-	msli "github.com/slok/service-level-operator/mocks/service/sli"
-	measurev1alpha1 "github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1"
-	"github.com/slok/service-level-operator/pkg/log"
-	"github.com/slok/service-level-operator/pkg/operator"
-	"github.com/slok/service-level-operator/pkg/service/output"
-	"github.com/slok/service-level-operator/pkg/service/sli"
+	moutput "github.com/spotahome/service-level-operator/mocks/service/output"
+	msli "github.com/spotahome/service-level-operator/mocks/service/sli"
+	monitoringv1alpha1 "github.com/spotahome/service-level-operator/pkg/apis/monitoring/v1alpha1"
+	"github.com/spotahome/service-level-operator/pkg/log"
+	"github.com/spotahome/service-level-operator/pkg/operator"
+	"github.com/spotahome/service-level-operator/pkg/service/output"
+	"github.com/spotahome/service-level-operator/pkg/service/sli"
 )
 
 var (
-	sl0 = &measurev1alpha1.ServiceLevel{
+	sl0 = &monitoringv1alpha1.ServiceLevel{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "fake-service0",
 			Namespace: "fake",
 		},
-		Spec: measurev1alpha1.ServiceLevelSpec{
-			ServiceLevelObjectives: []measurev1alpha1.SLO{
+		Spec: monitoringv1alpha1.ServiceLevelSpec{
+			ServiceLevelObjectives: []monitoringv1alpha1.SLO{
 				{
 					Name:                         "slo0",
 					AvailabilityObjectivePercent: 99.99,
 					Disable:                      true,
-					ServiceLevelIndicator: measurev1alpha1.SLI{
-						SLISource: measurev1alpha1.SLISource{
-							Prometheus: &measurev1alpha1.PrometheusSLISource{
+					ServiceLevelIndicator: monitoringv1alpha1.SLI{
+						SLISource: monitoringv1alpha1.SLISource{
+							Prometheus: &monitoringv1alpha1.PrometheusSLISource{
 								Address:    "http://127.0.0.1:9090",
 								TotalQuery: `sum(increase(skipper_serve_host_duration_seconds_count{host="www_spotahome_com"}[5m]))`,
 								ErrorQuery: `sum(increase(skipper_serve_host_duration_seconds_count{host="www_spotahome_com", code=~"5.."}[5m]))`,
 							},
 						},
 					},
-					Output: measurev1alpha1.Output{
-						Prometheus: &measurev1alpha1.PrometheusOutputSource{},
+					Output: monitoringv1alpha1.Output{
+						Prometheus: &monitoringv1alpha1.PrometheusOutputSource{},
 					},
 				},
 			},
 		},
 	}
 
-	sl1 = &measurev1alpha1.ServiceLevel{
+	sl1 = &monitoringv1alpha1.ServiceLevel{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "fake-service0",
 			Namespace: "fake",
 		},
-		Spec: measurev1alpha1.ServiceLevelSpec{
-			ServiceLevelObjectives: []measurev1alpha1.SLO{
+		Spec: monitoringv1alpha1.ServiceLevelSpec{
+			ServiceLevelObjectives: []monitoringv1alpha1.SLO{
 				{
 					Name:                         "slo0",
 					AvailabilityObjectivePercent: 99.95,
-					ServiceLevelIndicator: measurev1alpha1.SLI{
-						SLISource: measurev1alpha1.SLISource{
-							Prometheus: &measurev1alpha1.PrometheusSLISource{},
+					ServiceLevelIndicator: monitoringv1alpha1.SLI{
+						SLISource: monitoringv1alpha1.SLISource{
+							Prometheus: &monitoringv1alpha1.PrometheusSLISource{},
 						},
 					},
-					Output: measurev1alpha1.Output{
-						Prometheus: &measurev1alpha1.PrometheusOutputSource{},
+					Output: monitoringv1alpha1.Output{
+						Prometheus: &monitoringv1alpha1.PrometheusOutputSource{},
 					},
 				},
 				{
 					Name:                         "slo1",
 					AvailabilityObjectivePercent: 99.99,
-					ServiceLevelIndicator: measurev1alpha1.SLI{
-						SLISource: measurev1alpha1.SLISource{
-							Prometheus: &measurev1alpha1.PrometheusSLISource{},
+					ServiceLevelIndicator: monitoringv1alpha1.SLI{
+						SLISource: monitoringv1alpha1.SLISource{
+							Prometheus: &monitoringv1alpha1.PrometheusSLISource{},
 						},
 					},
-					Output: measurev1alpha1.Output{
-						Prometheus: &measurev1alpha1.PrometheusOutputSource{},
+					Output: monitoringv1alpha1.Output{
+						Prometheus: &monitoringv1alpha1.PrometheusOutputSource{},
 					},
 				},
 				{
 					Name:                         "slo2",
 					AvailabilityObjectivePercent: 99.9,
-					ServiceLevelIndicator: measurev1alpha1.SLI{
-						SLISource: measurev1alpha1.SLISource{
-							Prometheus: &measurev1alpha1.PrometheusSLISource{},
+					ServiceLevelIndicator: monitoringv1alpha1.SLI{
+						SLISource: monitoringv1alpha1.SLISource{
+							Prometheus: &monitoringv1alpha1.PrometheusSLISource{},
 						},
 					},
-					Output: measurev1alpha1.Output{
-						Prometheus: &measurev1alpha1.PrometheusOutputSource{},
+					Output: monitoringv1alpha1.Output{
+						Prometheus: &monitoringv1alpha1.PrometheusOutputSource{},
 					},
 				},
 				{
 					Name:                         "slo3",
 					AvailabilityObjectivePercent: 99.9999,
 					Disable:                      true,
-					ServiceLevelIndicator: measurev1alpha1.SLI{
-						SLISource: measurev1alpha1.SLISource{
-							Prometheus: &measurev1alpha1.PrometheusSLISource{},
+					ServiceLevelIndicator: monitoringv1alpha1.SLI{
+						SLISource: monitoringv1alpha1.SLISource{
+							Prometheus: &monitoringv1alpha1.PrometheusSLISource{},
 						},
 					},
-					Output: measurev1alpha1.Output{
-						Prometheus: &measurev1alpha1.PrometheusOutputSource{},
+					Output: monitoringv1alpha1.Output{
+						Prometheus: &monitoringv1alpha1.PrometheusOutputSource{},
 					},
 				},
 			},
@@ -110,7 +110,7 @@ var (
 func TestHandler(t *testing.T) {
 	tests := []struct {
 		name         string
-		serviceLevel *measurev1alpha1.ServiceLevel
+		serviceLevel *monitoringv1alpha1.ServiceLevel
 		processTimes int
 		expErr       bool
 	}{

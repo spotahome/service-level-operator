@@ -19,7 +19,7 @@ limitations under the License.
 package fake
 
 import (
-	v1alpha1 "github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1"
+	v1alpha1 "github.com/spotahome/service-level-operator/pkg/apis/monitoring/v1alpha1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	labels "k8s.io/apimachinery/pkg/labels"
 	schema "k8s.io/apimachinery/pkg/runtime/schema"
@@ -30,13 +30,13 @@ import (
 
 // FakeServiceLevels implements ServiceLevelInterface
 type FakeServiceLevels struct {
-	Fake *FakeMeasureV1alpha1
+	Fake *FakeMonitoringV1alpha1
 	ns   string
 }
 
-var servicelevelsResource = schema.GroupVersionResource{Group: "measure.slok.xyz", Version: "v1alpha1", Resource: "servicelevels"}
+var servicelevelsResource = schema.GroupVersionResource{Group: "monitoring.spotahome.com", Version: "v1alpha1", Resource: "servicelevels"}
 
-var servicelevelsKind = schema.GroupVersionKind{Group: "measure.slok.xyz", Version: "v1alpha1", Kind: "ServiceLevel"}
+var servicelevelsKind = schema.GroupVersionKind{Group: "monitoring.spotahome.com", Version: "v1alpha1", Kind: "ServiceLevel"}
 
 // Get takes name of the serviceLevel, and returns the corresponding serviceLevel object, and an error if there is any.
 func (c *FakeServiceLevels) Get(name string, options v1.GetOptions) (result *v1alpha1.ServiceLevel, err error) {

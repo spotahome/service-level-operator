@@ -7,7 +7,7 @@ if [ -z ${VERSION} ]; then
     exit 1
 fi
 
-REPOSITORY="quay.io/slok/"
+REPOSITORY="quay.io/spotahome/"
 IMAGE="service-level-operator"
 TARGET_IMAGE=${REPOSITORY}${IMAGE}
 

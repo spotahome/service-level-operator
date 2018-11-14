@@ -19,28 +19,28 @@ limitations under the License.
 package v1alpha1
 
 import (
-	v1alpha1 "github.com/slok/service-level-operator/pkg/apis/measure/v1alpha1"
-	"github.com/slok/service-level-operator/pkg/k8sautogen/client/clientset/versioned/scheme"
+	v1alpha1 "github.com/spotahome/service-level-operator/pkg/apis/monitoring/v1alpha1"
+	"github.com/spotahome/service-level-operator/pkg/k8sautogen/client/clientset/versioned/scheme"
 	serializer "k8s.io/apimachinery/pkg/runtime/serializer"
 	rest "k8s.io/client-go/rest"
 )
 
-type MeasureV1alpha1Interface interface {
+type MonitoringV1alpha1Interface interface {
 	RESTClient() rest.Interface
 	ServiceLevelsGetter
 }
 
-// MeasureV1alpha1Client is used to interact with features provided by the measure.slok.xyz group.
-type MeasureV1alpha1Client struct {
+// MonitoringV1alpha1Client is used to interact with features provided by the monitoring.spotahome.com group.
+type MonitoringV1alpha1Client struct {
 	restClient rest.Interface
 }
 
-func (c *MeasureV1alpha1Client) ServiceLevels(namespace string) ServiceLevelInterface {
+func (c *MonitoringV1alpha1Client) ServiceLevels(namespace string) ServiceLevelInterface {
 	return newServiceLevels(c, namespace)
 }
 
-// NewForConfig creates a new MeasureV1alpha1Client for the given config.
-func NewForConfig(c *rest.Config) (*MeasureV1alpha1Client, error) {
+// NewForConfig creates a new MonitoringV1alpha1Client for the given config.
+func NewForConfig(c *rest.Config) (*MonitoringV1alpha1Client, error) {
 	config := *c
 	if err := setConfigDefaults(&config); err != nil {
 		return nil, err
@@ -49,12 +49,12 @@ func NewForConfig(c *rest.Config) (*MeasureV1alpha1Client, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &MeasureV1alpha1Client{client}, nil
+	return &MonitoringV1alpha1Client{client}, nil
 }
 
-// NewForConfigOrDie creates a new MeasureV1alpha1Client for the given config and
+// NewForConfigOrDie creates a new MonitoringV1alpha1Client for the given config and
 // panics if there is an error in the config.
-func NewForConfigOrDie(c *rest.Config) *MeasureV1alpha1Client {
+func NewForConfigOrDie(c *rest.Config) *MonitoringV1alpha1Client {
 	client, err := NewForConfig(c)
 	if err != nil {
 		panic(err)
@@ -62,9 +62,9 @@ func NewForConfigOrDie(c *rest.Config) *MeasureV1alpha1Client {
 	return client
 }
 
-// New creates a new MeasureV1alpha1Client for the given RESTClient.
-func New(c rest.Interface) *MeasureV1alpha1Client {
-	return &MeasureV1alpha1Client{c}
+// New creates a new MonitoringV1alpha1Client for the given RESTClient.
+func New(c rest.Interface) *MonitoringV1alpha1Client {
+	return &MonitoringV1alpha1Client{c}
 }
 
 func setConfigDefaults(config *rest.Config) error {
@@ -82,7 +82,7 @@ func setConfigDefaults(config *rest.Config) error {
 
 // RESTClient returns a RESTClient that is used to communicate
 // with API server by this client implementation.
-func (c *MeasureV1alpha1Client) RESTClient() rest.Interface {
+func (c *MonitoringV1alpha1Client) RESTClient() rest.Interface {
 	if c == nil {
 		return nil
 	}

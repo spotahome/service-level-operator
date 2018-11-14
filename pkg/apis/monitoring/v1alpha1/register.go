@@ -6,7 +6,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 
-	"github.com/slok/service-level-operator/pkg/apis/measure"
+	"github.com/spotahome/service-level-operator/pkg/apis/monitoring"
 )
 
 const (
@@ -22,7 +22,7 @@ const (
 )
 
 // SchemeGroupVersion is group version used to register these objects
-var SchemeGroupVersion = schema.GroupVersion{Group: measure.GroupName, Version: version}
+var SchemeGroupVersion = schema.GroupVersion{Group: monitoring.GroupName, Version: version}
 
 // Kind takes an unqualified kind and returns back a Group qualified GroupKind
 func Kind(kind string) schema.GroupKind {
