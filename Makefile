@@ -45,7 +45,7 @@ FAKE_CMD := $(DEV_CMD) --fake
 K8S_CODE_GEN_CMD := ./hack/scripts/k8scodegen.sh
 OPENAPI_CODE_GEN_CMD := ./hack/scripts/openapicodegen.sh
 DEPS_CMD := GO111MODULE=on go mod tidy && GO111MODULE=on go mod vendor
-K8S_VERSION := 1.11.3
+K8S_VERSION := 1.13.12
 SET_K8S_DEPS_CMD := GO111MODULE=on go mod edit \
     -require=k8s.io/apiextensions-apiserver@kubernetes-${K8S_VERSION} \
 	-require=k8s.io/client-go@kubernetes-${K8S_VERSION} \
