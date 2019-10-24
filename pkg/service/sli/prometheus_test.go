@@ -123,8 +123,8 @@ func TestPrometheusRetrieve(t *testing.T) {
 			// Mocks.
 			mapi := &mpromv1.API{}
 			mpromfactory := &prometheusvc.MockFactory{Cli: mapi}
-			mapi.On("Query", mock.Anything, test.sli.Prometheus.TotalQuery, mock.Anything).Return(test.totalQueryResult, test.errorQueryErr)
-			mapi.On("Query", mock.Anything, test.sli.Prometheus.ErrorQuery, mock.Anything).Return(test.errorQueryResult, test.totalQueryErr)
+			mapi.On("Query", mock.Anything, test.sli.Prometheus.TotalQuery, mock.Anything).Return(test.totalQueryResult, nil, test.errorQueryErr)
+			mapi.On("Query", mock.Anything, test.sli.Prometheus.ErrorQuery, mock.Anything).Return(test.errorQueryResult, nil, test.totalQueryErr)
 
 			retriever := sli.NewPrometheus(mpromfactory, log.Dummy)
 			res, err := retriever.Retrieve(test.sli)
