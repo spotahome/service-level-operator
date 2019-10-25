@@ -50,6 +50,8 @@ func (f *BaseFactory) GetV1APIClient(address string) (promv1.API, error) {
 // WithDefaultV1APIClient sets a default client for V1 api client.
 func (f *BaseFactory) WithDefaultV1APIClient(address string) error {
 	const defAddressKey = ""
+	f.climu.Lock()
+	defer f.climu.Unlock()
 
 	dc, err := newClient(address)
 	if err != nil {
