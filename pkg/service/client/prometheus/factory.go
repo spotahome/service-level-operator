@@ -23,10 +23,7 @@ type BaseFactory struct {
 	climu  sync.Mutex
 }
 
-// NewBaseFactory returns a new client factory.
-// If default address is passed when an empty address
-// client is requested it will return the client based
-// on this address
+// NewBaseFactory returns a new client Basefactory.
 func NewBaseFactory() *BaseFactory {
 	return &BaseFactory{
 		v1Clis: map[string]api.Client{},

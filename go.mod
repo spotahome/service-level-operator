@@ -2,7 +2,6 @@ module github.com/spotahome/service-level-operator
 
 require (
 	github.com/go-openapi/spec v0.17.0
-	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
 	github.com/oklog/run v1.0.0
 	github.com/prometheus/client_golang v1.2.1
 	github.com/prometheus/common v0.7.0
@@ -16,7 +15,5 @@ require (
 	k8s.io/client-go v0.0.0-20191004102537-eb5b9a8cfde7
 	k8s.io/kube-openapi v0.0.0-20190918143330-0270cf2f1c1d
 )
-
-replace k8s.io/client-go@v2.0.0-alpha.0.0.20180910083459-2cefa64ff137+incompatible => k8s.io/client-go v1.11.3
 
 go 1.13

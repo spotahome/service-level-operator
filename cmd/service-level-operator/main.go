@@ -125,6 +125,9 @@ func (m *Main) Run() error {
 			}
 			defer f.Close()
 			cfgSLISrc, err = configuration.JSONLoader{}.LoadDefaultSLISource(context.Background(), f)
+			if err != nil {
+				return err
+			}
 		}
 
 		// Create SLI source client factories.

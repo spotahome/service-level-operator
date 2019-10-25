@@ -10,10 +10,9 @@ import (
 
 func TestBaseFactoryV1Client(t *testing.T) {
 	tests := map[string]struct {
-		cli        func() *prometheus.BaseFactory
-		address    string
-		expAddress string
-		expErr     bool
+		cli     func() *prometheus.BaseFactory
+		address string
+		expErr  bool
 	}{
 		"A regular client address should be returned without error.": {
 			cli: func() *prometheus.BaseFactory {
