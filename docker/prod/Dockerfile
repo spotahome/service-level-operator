@@ -1,9 +1,9 @@
-FROM golang:1.11-alpine AS build-stage
+FROM golang:1.13-alpine AS build-stage
 
 RUN apk --no-cache add \
-    g++ \
-    git \
-    make
+  g++ \
+  git \
+  make
 
 ARG VERSION
 ENV VERSION=${VERSION}

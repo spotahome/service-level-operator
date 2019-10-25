@@ -66,7 +66,7 @@ func (p *prometheus) Retrieve(sli *monitoringv1alpha1.SLI) (Result, error) {
 
 func (p *prometheus) getVectorMetric(ctx context.Context, cli promv1.API, query string) (float64, error) {
 	// Make the query.
-	val, err := cli.Query(ctx, query, time.Now())
+	val, _, err := cli.Query(ctx, query, time.Now())
 	if err != nil {
 		return 0, err
 	}

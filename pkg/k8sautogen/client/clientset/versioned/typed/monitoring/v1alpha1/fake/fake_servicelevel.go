@@ -1,5 +1,5 @@
 /*
-Copyright 2018 The Kubernetes Authors.
+Copyright The Kubernetes Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -62,7 +62,7 @@ func (c *FakeServiceLevels) List(opts v1.ListOptions) (result *v1alpha1.ServiceL
 	if label == nil {
 		label = labels.Everything()
 	}
-	list := &v1alpha1.ServiceLevelList{}
+	list := &v1alpha1.ServiceLevelList{ListMeta: obj.(*v1alpha1.ServiceLevelList).ListMeta}
 	for _, item := range obj.(*v1alpha1.ServiceLevelList).Items {
 		if label.Matches(labels.Set(item.Labels)) {
 			list.Items = append(list.Items, item)
@@ -119,7 +119,7 @@ func (c *FakeServiceLevels) DeleteCollection(options *v1.DeleteOptions, listOpti
 // Patch applies the patch and returns the patched serviceLevel.
 func (c *FakeServiceLevels) Patch(name string, pt types.PatchType, data []byte, subresources ...string) (result *v1alpha1.ServiceLevel, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewPatchSubresourceAction(servicelevelsResource, c.ns, name, data, subresources...), &v1alpha1.ServiceLevel{})
+		Invokes(testing.NewPatchSubresourceAction(servicelevelsResource, c.ns, name, pt, data, subresources...), &v1alpha1.ServiceLevel{})
 
 	if obj == nil {
 		return nil, err

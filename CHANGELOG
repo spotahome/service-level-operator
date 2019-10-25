@@ -1,15 +1,24 @@
-## 0.2.0 / 2018-11-14
 
-This release breaks the CRD apiVersion and the current registered CRDs needs to be re registered with  `apiVersion: monitoring.spotahome.com/v1alpha1`.
+## [Unreleased]
+### Added
+- Default SLI input configurations for the SLOs that don't have SLI inputs.
 
-* [CHANGE] Move CRD api from `apiVersion: measure.slok.xyz/v1alpha1` to `apiVersion: monitoring.spotahome.com/v1alpha1`.
-* [CHANGE] Move repository from github.com/slok/service-level-operator to github.com/spotahome/service-level-operator.
-* [FEATURE] Add Grafana dashboard.
+## [0.2.0] - 2018-11-14
+### Added
+- Grafana dashboard.
 
-## 0.1.0 / 2018-10-31
+### Changed
+- Move CRD api from `apiVersion: measure.slok.xyz/v1alpha1` to `apiVersion: monitoring.spotahome.com/v1alpha1`.
+- Move repository from github.com/slok/service-level-operator to github.com/spotahome/service-level-operator.
 
-* [FEATURE] Add prometheus metrics for the SLI processing flow.
-* [FEATURE] Add deploy example manifests for Kubernetes.
-* [FEATURE] Add Prometheus SLI inputs and SLI result outputs.
-* [FEATURE] Add operator.
-* [FEATURE] Add service level CRD.
+## [0.1.0] - 2018-10-31
+### Added
+- Prometheus metrics for the SLI processing flow.
+- Deploy example manifests for Kubernetes.
+- Prometheus SLI inputs and SLI result outputs.
+- Operator.
+- Service level CRD.
+
+[Unreleased]: https://github.com/spotahome/service-level-operator/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/spotahome/service-level-operator/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/spotahome/service-level-operator/releases/tag/v0.1.0

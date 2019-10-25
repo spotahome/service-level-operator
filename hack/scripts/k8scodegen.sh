@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-CODE_GENERATOR_IMAGE=quay.io/slok/kube-code-generator:v1.10.0
+CODE_GENERATOR_IMAGE=quay.io/slok/kube-code-generator:v1.13.5
 DIRECTORY=${PWD}
 CODE_GENERATOR_PACKAGE=github.com/spotahome/service-level-operator
 

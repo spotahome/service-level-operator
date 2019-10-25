@@ -82,11 +82,48 @@ There is a [grafana dashboard][grafana-dashboard] to show the SLO's status.
 
 ## Supported input/output backends
 
-### Input
+### Input (SLI sources)
+
+Inputs for SLIs can be declared at two levels.
+
+At SLO level (this way we can use different endpoint for each SLO)
+
+```yaml
+...
+  serviceLevelObjectives:
+    - name: "my_slok"
+      ...
+      serviceLevelIndicator:
+        prometheus:
+          address: http://myprometheus:9090
+          ...
+```
+
+Also, if any of the SLOs does not have a default input, setting a default SLI source configuration when running the operator will fallback to these.
+
+The flag is `--def-sli-source-path` and the file format is this:
+
+```json
+{
+  "prometheus": {
+    "address": "http://127.0.0.1:9090"
+  }
+}
+```
+
+Example:
+
+```bash
+--def-sli-source-path <(echo '{"prometheus": {"address": "http://127.0.0.1:12345"}}')
+```
+
+List of supported SLI sources:
 
 - [Prometheus]
 
 ### Output
+
+Outputs are how the SLO metrics will be exported. Here is a list of supported output backends:
 
 - [Prometheus]
 

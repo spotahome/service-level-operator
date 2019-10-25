@@ -14,6 +14,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	apiextensionscli "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
 	"k8s.io/client-go/kubernetes"
+	_ "k8s.io/client-go/plugin/pkg/client/auth/oidc"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 
@@ -22,6 +23,7 @@ import (
 	"github.com/spotahome/service-level-operator/pkg/operator"
 	kubernetesclifactory "github.com/spotahome/service-level-operator/pkg/service/client/kubernetes"
 	promclifactory "github.com/spotahome/service-level-operator/pkg/service/client/prometheus"
+	"github.com/spotahome/service-level-operator/pkg/service/configuration"
 	kubernetesservice "github.com/spotahome/service-level-operator/pkg/service/kubernetes"
 	"github.com/spotahome/service-level-operator/pkg/service/metrics"
 )
@@ -113,7 +115,27 @@ func (m *Main) Run() error {
 
 	// Operator.
 	{
-		promCliFactory := m.createPrometheusCliFactory()
+
+		// Load configuration.
+		var cfgSLISrc *configuration.DefaultSLISource
+		if m.flags.defSLISourcePath != "" {
+			f, err := os.Open(m.flags.defSLISourcePath)
+			if err != nil {
+				return err
+			}
+			defer f.Close()
+			cfgSLISrc, err = configuration.JSONLoader{}.LoadDefaultSLISource(context.Background(), f)
+			if err != nil {
+				return err
+			}
+		}
+
+		// Create SLI source client factories.
+		promCliFactory, err := m.createPrometheusCliFactory(cfgSLISrc)
+		if err != nil {
+			return err
+		}
+
 		cfg := m.flags.toOperatorConfig()
 		op, err := operator.New(cfg, promReg, promCliFactory, k8ssvc, metricssvc, m.logger)
 		if err != nil {
@@ -161,7 +183,6 @@ func (m *Main) loadKubernetesConfig() (*rest.Config, error) {
 }
 
 func (m *Main) createKubernetesClients() (kubernetes.Interface, crdcli.Interface, apiextensionscli.Interface, error) {
-
 	var factory kubernetesclifactory.ClientFactory
 
 	if m.flags.fake {
@@ -192,12 +213,21 @@ func (m *Main) createKubernetesClients() (kubernetes.Interface, crdcli.Interface
 	return stdcli, crdcli, aexcli, nil
 }
 
-func (m *Main) createPrometheusCliFactory() promclifactory.ClientFactory {
+func (m *Main) createPrometheusCliFactory(cfg *configuration.DefaultSLISource) (promclifactory.ClientFactory, error) {
 	if m.flags.fake {
-		return promclifactory.NewFakeFactory()
+		return promclifactory.NewFakeFactory(), nil
 	}
 
-	return promclifactory.NewFactory()
+	f := promclifactory.NewBaseFactory()
+	if cfg != nil && cfg.Prometheus.Address != "" {
+		err := f.WithDefaultV1APIClient(cfg.Prometheus.Address)
+		if err != nil {
+			return nil, err
+		}
+		m.logger.Infof("prometheus default SLI source set to: %s", cfg.Prometheus.Address)
+	}
+
+	return f, nil
 }
 
 // createHTTPServer creates the http server that serves prometheus metrics and healthchecks.

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/prometheus/client_golang/api"
 	promv1 "github.com/prometheus/client_golang/api/prometheus/v1"
 	"github.com/prometheus/common/model"
 )
@@ -49,11 +50,11 @@ type fakeAPICli struct {
 	queryFuncs map[string]func() float64
 }
 
-func (f *fakeAPICli) Query(_ context.Context, query string, ts time.Time) (model.Value, error) {
+func (f *fakeAPICli) Query(_ context.Context, query string, ts time.Time) (model.Value, api.Warnings, error) {
 
 	fn, ok := f.queryFuncs[query]
 	if !ok {
-		return nil, fmt.Errorf("not faked result")
+		return nil, nil, fmt.Errorf("not faked result")
 	}
 
 	return model.Vector{
@@ -62,9 +63,12 @@ func (f *fakeAPICli) Query(_ context.Context, query string, ts time.Time) (model
 			Timestamp: model.Time(time.Now().UTC().Nanosecond()),
 			Value:     model.SampleValue(fn()),
 		},
-	}, nil
+	}, nil, nil
 }
 
+func (f *fakeAPICli) Alerts(ctx context.Context) (promv1.AlertsResult, error) {
+	return promv1.AlertsResult{}, nil
+}
 func (f *fakeAPICli) AlertManagers(_ context.Context) (promv1.AlertManagersResult, error) {
 	return promv1.AlertManagersResult{}, nil
 }
@@ -80,18 +84,27 @@ func (f *fakeAPICli) DeleteSeries(_ context.Context, matches []string, startTime
 func (f *fakeAPICli) Flags(_ context.Context) (promv1.FlagsResult, error) {
 	return promv1.FlagsResult{}, nil
 }
-func (f *fakeAPICli) LabelValues(_ context.Context, label string) (model.LabelValues, error) {
-	return model.LabelValues{}, nil
+func (f *fakeAPICli) LabelNames(ctx context.Context) ([]string, api.Warnings, error) {
+	return nil, nil, nil
 }
-func (f *fakeAPICli) QueryRange(_ context.Context, query string, r promv1.Range) (model.Value, error) {
-	return nil, nil
+func (f *fakeAPICli) LabelValues(_ context.Context, label string) (model.LabelValues, api.Warnings, error) {
+	return model.LabelValues{}, nil, nil
 }
-func (f *fakeAPICli) Series(_ context.Context, matches []string, startTime time.Time, endTime time.Time) ([]model.LabelSet, error) {
-	return []model.LabelSet{}, nil
+func (f *fakeAPICli) QueryRange(_ context.Context, query string, r promv1.Range) (model.Value, api.Warnings, error) {
+	return nil, nil, nil
+}
+func (f *fakeAPICli) Series(_ context.Context, matches []string, startTime time.Time, endTime time.Time) ([]model.LabelSet, api.Warnings, error) {
+	return []model.LabelSet{}, nil, nil
 }
 func (f *fakeAPICli) Snapshot(_ context.Context, skipHead bool) (promv1.SnapshotResult, error) {
 	return promv1.SnapshotResult{}, nil
 }
+func (f *fakeAPICli) Rules(ctx context.Context) (promv1.RulesResult, error) {
+	return promv1.RulesResult{}, nil
+}
 func (f *fakeAPICli) Targets(_ context.Context) (promv1.TargetsResult, error) {
 	return promv1.TargetsResult{}, nil
+}
+func (f *fakeAPICli) TargetsMetadata(ctx context.Context, matchTarget string, metric string, limit string) ([]promv1.MetricMetadata, error) {
+	return nil, nil
 }
