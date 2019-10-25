@@ -29,6 +29,7 @@ type cmdFlags struct {
 	listenAddress string
 	labelSelector string
 	namespace     string
+	defSLISourcePath string
 	debug         bool
 	development   bool
 	fake          bool
@@ -52,6 +53,7 @@ func (c *cmdFlags) init() {
 	c.fs.StringVar(&c.listenAddress, "listen-addr", defListenAddress, "the address where the metrics will be exposed")
 	c.fs.StringVar(&c.labelSelector, "selector", "", "selector (label query) to filter on, supports '=', '==', and '!='.(e.g. -l key1=value1,key2=value2)")
 	c.fs.StringVar(&c.namespace, "namespace", "", "the namespace to filter on, by default all")
+	c.fs.StringVar(&c.defSLISourcePath, "def-sli-source-path", "", "the path to the default sli sources configuration file")
 	c.fs.IntVar(&c.resyncSeconds, "resync-seconds", defResyncSeconds, "the number of seconds for the SLO calculation interval")
 	c.fs.IntVar(&c.workers, "workers", defWorkers, "the number of concurrent workers per controller handling events")
 	c.fs.BoolVar(&c.development, "development", false, "development flag will allow to run the operator outside a kubernetes cluster")
