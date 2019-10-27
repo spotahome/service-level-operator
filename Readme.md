@@ -84,14 +84,14 @@ There is a [grafana dashboard][grafana-dashboard] to show the SLO's status.
 
 ### Input (SLI sources)
 
-Inputs for SLIs can be declared at two levels.
+Each SLO can set the SLI metrics source settings in the CRD, this is handy when you have SLOs with different SLI sources, for example one SLO in Prometheus A, and another SLO in Prometheus B.
 
-At SLO level (this way we can use different endpoint for each SLO)
+Example for a Prometheus SLI source:
 
 ```yaml
 ...
   serviceLevelObjectives:
-    - name: "my_slok"
+    - name: "my_slo"
       ...
       serviceLevelIndicator:
         prometheus:
@@ -99,9 +99,11 @@ At SLO level (this way we can use different endpoint for each SLO)
           ...
 ```
 
-Also, if any of the SLOs does not have a default input, setting a default SLI source configuration when running the operator will fallback to these.
+In case all of our SLOs use the same SLI source, setting this can be repetitive, this is why we can use the `--def-sli-source-path` application flag when running the operator.
 
-The flag is `--def-sli-source-path` and the file format is this:
+This flag points to a file where we can set the default SLI source settings (per backend type), these settings will be used as fallback for the SLOs that don't set the SLI source settings in the CRD.
+
+The file format is this:
 
 ```json
 {
@@ -111,10 +113,12 @@ The flag is `--def-sli-source-path` and the file format is this:
 }
 ```
 
-Example:
+The above example would set the prometheus address to `http://127.0.0.1:9090` on all the SLOs that use Prometheus as an SLI source but don't have set the Prometheus address. this way we don't need to set the same Prometheus address on all the CRD SLOs.
+
+An example of running this would be:
 
 ```bash
---def-sli-source-path <(echo '{"prometheus": {"address": "http://127.0.0.1:12345"}}')
+operator-binary --def-sli-source-path <(echo '{"prometheus": {"address": "http://127.0.0.1:12345"}}')
 ```
 
 List of supported SLI sources:
