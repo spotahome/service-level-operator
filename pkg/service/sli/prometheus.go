@@ -15,7 +15,7 @@ import (
 	promcli "github.com/spotahome/service-level-operator/pkg/service/client/prometheus"
 )
 
-const promCliTimeout = 2 * time.Second
+const promCliTimeout = 10 * time.Second
 
 // prometheus knows how to get SLIs from a prometheus backend.
 type prometheus struct {

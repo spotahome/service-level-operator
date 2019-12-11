@@ -2,6 +2,7 @@ module github.com/spotahome/service-level-operator
 
 require (
 	github.com/go-openapi/spec v0.17.0
+	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/oklog/run v1.0.0
 	github.com/prometheus/client_golang v1.2.1
 	github.com/prometheus/common v0.7.0
