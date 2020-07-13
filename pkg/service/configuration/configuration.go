@@ -18,7 +18,6 @@ type PrometheusSLISource struct {
 	Address string `json:"address,omitempty"`
 }
 
-
 // Loader knows how to load configuration based on different formats.
 // At this moment configuration is not versioned, the configuration
 // is so simple that if it grows we could refactor and add version,

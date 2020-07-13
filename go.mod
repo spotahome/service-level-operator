@@ -8,7 +8,7 @@ require (
 	github.com/sirupsen/logrus v1.4.2
 	github.com/spotahome/kooper v0.6.1-0.20190926114429-1c6a0cfab9a5
 	github.com/stretchr/testify v1.4.0
-	golang.org/x/sync v0.0.0-20190227155943-e225da77a7e6
+	golang.org/x/sync v0.0.0-20200625203802-6e8e738ad208
 	k8s.io/api v0.0.0-20191004102255-dacd7df5a50b // indirect
 	k8s.io/apiextensions-apiserver v0.0.0-20191004105443-a7d558db75c6
 	k8s.io/apimachinery v0.0.0-20191004074956-01f8b7d1121a
@@ -16,4 +16,4 @@ require (
 	k8s.io/kube-openapi v0.0.0-20190918143330-0270cf2f1c1d
 )
 
-go 1.13
+go 1.14

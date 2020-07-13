@@ -42,6 +42,12 @@ type Main struct {
 
 // Run runs the main program.
 func (m *Main) Run() error {
+	flags, err := newCmdFlags()
+	if err != nil {
+		return err
+	}
+	m.flags = flags
+
 	// Prepare the logger with the correct settings.
 	jsonLog := true
 	if m.flags.development {
@@ -49,7 +55,10 @@ func (m *Main) Run() error {
 	}
 	m.logger = log.Base(jsonLog)
 	if m.flags.debug {
-		m.logger.Set("debug")
+		err := m.logger.Set("debug")
+		if err != nil {
+			return err
+		}
 	}
 
 	if m.flags.fake {
@@ -236,7 +245,7 @@ func (m *Main) createHTTPServer(promReg *prometheus.Registry) http.Server {
 	mux := http.NewServeMux()
 	mux.Handle(m.flags.metricsPath, h)
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(`<html>
+		_, _ = w.Write([]byte(`<html>
 			<head><title>Service level operator</title></head>
 			<body>
 			<h1>Service level operator</h1>
@@ -244,8 +253,8 @@ func (m *Main) createHTTPServer(promReg *prometheus.Registry) http.Server {
 			</body>
 			</html>`))
 	})
-	mux.HandleFunc("/healthz/ready", func(w http.ResponseWriter, r *http.Request) { w.Write([]byte(`ready`)) })
-	mux.HandleFunc("/healthz/live", func(w http.ResponseWriter, r *http.Request) { w.Write([]byte(`live`)) })
+	mux.HandleFunc("/healthz/ready", func(w http.ResponseWriter, r *http.Request) { _, _ = w.Write([]byte(`ready`)) })
+	mux.HandleFunc("/healthz/live", func(w http.ResponseWriter, r *http.Request) { _, _ = w.Write([]byte(`live`)) })
 
 	return http.Server{
 		Handler: mux,
@@ -254,7 +263,7 @@ func (m *Main) createHTTPServer(promReg *prometheus.Registry) http.Server {
 }
 
 func main() {
-	m := &Main{flags: newCmdFlags()}
+	m := &Main{}
 
 	// Party time!
 	err := m.Run()

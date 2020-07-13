@@ -32,7 +32,7 @@ func TestBaseFactoryV1Client(t *testing.T) {
 		"Getting a missing address client with a default client it should not error.": {
 			cli: func() *prometheus.BaseFactory {
 				f := prometheus.NewBaseFactory()
-				f.WithDefaultV1APIClient("http://127.0.0.1:9090")
+				_ = f.WithDefaultV1APIClient("http://127.0.0.1:9090")
 				return f
 			},
 			address: "",

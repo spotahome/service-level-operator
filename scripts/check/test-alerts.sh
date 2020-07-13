@@ -1,4 +1,7 @@
-#!/bin/sh
+#!/usr/bin/env sh
+
+set -o errexit
+set -o nounset
 
 DIR="$(dirname "$(readlink -f $0)")"
 ROOT_DIR="${DIR}/../.."

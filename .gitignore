@@ -13,5 +13,5 @@
 # Binary
 bin/
 
-# vendor
-vendor/
+# Coverage.
+.test_coverage.txt
