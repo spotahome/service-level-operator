@@ -3,4 +3,4 @@
 set -o errexit
 set -o nounset
 
-go generate ./mocks
+golangci-lint run -E goimports --timeout 3m

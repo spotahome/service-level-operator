@@ -22,29 +22,33 @@ const (
 type cmdFlags struct {
 	fs *flag.FlagSet
 
-	kubeConfig    string
-	resyncSeconds int
-	workers       int
-	metricsPath   string
-	listenAddress string
-	labelSelector string
-	namespace     string
+	kubeConfig       string
+	resyncSeconds    int
+	workers          int
+	metricsPath      string
+	listenAddress    string
+	labelSelector    string
+	namespace        string
 	defSLISourcePath string
-	debug         bool
-	development   bool
-	fake          bool
+	debug            bool
+	development      bool
+	fake             bool
 }
 
-func newCmdFlags() *cmdFlags {
+func newCmdFlags() (*cmdFlags, error) {
 	c := &cmdFlags{
 		fs: flag.NewFlagSet(os.Args[0], flag.ExitOnError),
 	}
-	c.init()
 
-	return c
+	err := c.init()
+	if err != nil {
+		return nil, err
+	}
+
+	return c, nil
 }
 
-func (c *cmdFlags) init() {
+func (c *cmdFlags) init() error {
 
 	kubehome := filepath.Join(homedir.HomeDir(), ".kube", "config")
 	// register flags
@@ -60,8 +64,7 @@ func (c *cmdFlags) init() {
 	c.fs.BoolVar(&c.debug, "debug", false, "enable debug mode")
 	c.fs.BoolVar(&c.fake, "fake", false, "enable faked mode, in faked node external services/dependencies are not needed")
 
-	// Parse flags
-	c.fs.Parse(os.Args[1:])
+	return c.fs.Parse(os.Args[1:])
 }
 
 func (c *cmdFlags) toOperatorConfig() operator.Config {

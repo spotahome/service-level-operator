@@ -76,7 +76,7 @@ func TestPrometheusOutput(t *testing.T) {
 		{
 			name: "Creating a output result should expose all the required metrics",
 			createResults: func(output output.Output) {
-				output.Create(sl0, slo00, &sli.Result{
+				_ = output.Create(sl0, slo00, &sli.Result{
 					TotalQ: 1000000,
 					ErrorQ: 122,
 				})
@@ -93,7 +93,7 @@ func TestPrometheusOutput(t *testing.T) {
 				ExpireDuration: 500 * time.Microsecond,
 			},
 			createResults: func(output output.Output) {
-				output.Create(sl0, slo00, &sli.Result{
+				_ = output.Create(sl0, slo00, &sli.Result{
 					TotalQ: 1000000,
 					ErrorQ: 122,
 				})
@@ -109,17 +109,17 @@ func TestPrometheusOutput(t *testing.T) {
 			name: "Creating a output result should expose all the required metrics (multiple adds on same SLO).",
 			createResults: func(output output.Output) {
 				slis := []*sli.Result{
-					&sli.Result{TotalQ: 1000000, ErrorQ: 122},
-					&sli.Result{TotalQ: 999, ErrorQ: 1},
-					&sli.Result{TotalQ: 812392, ErrorQ: 94},
-					&sli.Result{TotalQ: 83, ErrorQ: 83},
-					&sli.Result{TotalQ: 11223, ErrorQ: 11222},
-					&sli.Result{TotalQ: 9999999999, ErrorQ: 2},
-					&sli.Result{TotalQ: 1245, ErrorQ: 0},
-					&sli.Result{TotalQ: 9019, ErrorQ: 1001},
+					{TotalQ: 1000000, ErrorQ: 122},
+					{TotalQ: 999, ErrorQ: 1},
+					{TotalQ: 812392, ErrorQ: 94},
+					{TotalQ: 83, ErrorQ: 83},
+					{TotalQ: 11223, ErrorQ: 11222},
+					{TotalQ: 9999999999, ErrorQ: 2},
+					{TotalQ: 1245, ErrorQ: 0},
+					{TotalQ: 9019, ErrorQ: 1001},
 				}
 				for _, sli := range slis {
-					output.Create(sl0, slo00, sli)
+					_ = output.Create(sl0, slo00, sli)
 				}
 			},
 			expMetrics: []string{
@@ -131,23 +131,23 @@ func TestPrometheusOutput(t *testing.T) {
 		{
 			name: "Creating a output result should expose all the required metrics (multiple SLOs).",
 			createResults: func(output output.Output) {
-				output.Create(sl0, slo00, &sli.Result{
+				_ = output.Create(sl0, slo00, &sli.Result{
 					TotalQ: 1000000,
 					ErrorQ: 122,
 				})
-				output.Create(sl0, slo01, &sli.Result{
+				_ = output.Create(sl0, slo01, &sli.Result{
 					TotalQ: 1011,
 					ErrorQ: 340,
 				})
-				output.Create(sl1, slo10, &sli.Result{
+				_ = output.Create(sl1, slo10, &sli.Result{
 					TotalQ: 9212,
 					ErrorQ: 1,
 				})
-				output.Create(sl1, slo10, &sli.Result{
+				_ = output.Create(sl1, slo10, &sli.Result{
 					TotalQ: 3456,
 					ErrorQ: 3,
 				})
-				output.Create(sl1, slo11, &sli.Result{
+				_ = output.Create(sl1, slo11, &sli.Result{
 					TotalQ: 998,
 					ErrorQ: 7,
 				})

@@ -1,138 +1,83 @@
-# Name of this service/application
-SERVICE_NAME := service-level-operator
 
-# Shell to use for running scripts
 SHELL := $(shell which bash)
-
-# Get docker path or an empty string
+OSTYPE := $(shell uname)
 DOCKER := $(shell command -v docker)
-
-# Get docker-compose path or an empty string
-DOCKER_COMPOSE := $(shell command -v docker-compose)
-
-# Get the main unix group for the user running make (to be used by docker-compose later)
 GID := $(shell id -g)
-
-# Get the unix user id for the user running make (to be used by docker-compose later)
 UID := $(shell id -u)
+VERSION ?= $(shell git describe --tags --always)
 
-# Bash history file for container shell
-HISTORY_FILE := ~/.bash_history.$(SERVICE_NAME)
+UNIT_TEST_CMD := ./scripts/check/unit-test.sh
+INTEGRATION_TEST_CMD := ./scripts/check/integration-test.sh
+CHECK_CMD := ./scripts/check/check.sh
 
-# Version from Git.
-VERSION=$(shell git describe --tags --always)
+DEV_IMAGE_NAME := spotahome/service-level-operator-dev
+PROD_IMAGE_NAME ?=  spotahome/service-level-operator
 
-# Dev direcotry has all the required dev files.
-DEV_DIR := ./docker/dev
-
-# cmds
-UNIT_TEST_CMD := ./hack/scripts/unit-test.sh
-INTEGRATION_TEST_CMD := ./hack/scripts/integration-test.sh
-TEST_ALERTS_CMD := ./hack/scripts/test-alerts.sh
-MOCKS_CMD := ./hack/scripts/mockgen.sh
-DOCKER_RUN_CMD := docker run \
-	-v ${PWD}:/src \
-	--rm -it $(SERVICE_NAME)
-DOCKER_ALERTS_TEST_RUN_CMD := docker run \
-	-v ${PWD}:/prometheus \
-	--entrypoint=${TEST_ALERTS_CMD} \
-	--rm -it prom/prometheus
-BUILD_BINARY_CMD := VERSION=${VERSION} ./hack/scripts/build-binary.sh
-BUILD_IMAGE_CMD := VERSION=${VERSION} ./hack/scripts/build-image.sh
-DEBUG_CMD := go run ./cmd/service-level-operator/* --debug
-DEV_CMD := $(DEBUG_CMD) --development
-FAKE_CMD := $(DEV_CMD) --fake
-K8S_CODE_GEN_CMD := ./hack/scripts/k8scodegen.sh
-OPENAPI_CODE_GEN_CMD := ./hack/scripts/openapicodegen.sh
-DEPS_CMD := GO111MODULE=on go mod tidy && GO111MODULE=on go mod vendor
-K8S_VERSION := 1.13.12
-SET_K8S_DEPS_CMD := GO111MODULE=on go mod edit \
-    -require=k8s.io/apiextensions-apiserver@kubernetes-${K8S_VERSION} \
-	-require=k8s.io/client-go@kubernetes-${K8S_VERSION} \
-	-require=k8s.io/apimachinery@kubernetes-${K8S_VERSION} \
-	-require=k8s.io/api@kubernetes-${K8S_VERSION} \
-	-require=k8s.io/kubernetes@v${K8S_VERSION} && \
-	$(DEPS_CMD)
+DOCKER_RUN_CMD := docker run --env ostype=$(OSTYPE) -v ${PWD}:/src --rm -it ${DEV_IMAGE_NAME}
+BUILD_BINARY_CMD := VERSION=${VERSION} ./scripts/build/build.sh
+BUILD_DEV_IMAGE_CMD := IMAGE=${DEV_IMAGE_NAME} DOCKER_FILE_PATH=./docker/dev/Dockerfile VERSION=latest ./scripts/build/build-image.sh
+BUILD_PROD_IMAGE_CMD := IMAGE=${PROD_IMAGE_NAME} DOCKER_FILE_PATH=./docker/prod/Dockerfile VERSION=${VERSION} ./scripts/build/build-image.sh
+PUBLISH_PROD_IMAGE_CMD := IMAGE=${PROD_IMAGE_NAME} VERSION=${VERSION} ./scripts/build/publish-image.sh
 
 
-# The default action of this Makefile is to build the development docker image
-default: build
+help: ## Show this help
+	@echo "Help"
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "    \033[36m%-20s\033[93m %s\n", $$1, $$2}'
 
-# Test if the dependencies we need to run this Makefile are installed
-.PHONY: deps-development
-deps-development:
-ifndef DOCKER
-	@echo "Docker is not available. Please install docker"
-	@exit 1
-endif
-ifndef DOCKER_COMPOSE
-	@echo "docker-compose is not available. Please install docker-compose"
-	@exit 1
-endif
-
-# Build the development docker images
-.PHONY: build
-build:
-	docker build -t $(SERVICE_NAME) --build-arg uid=$(UID) --build-arg  gid=$(GID) -f $(DEV_DIR)/Dockerfile .
-
-# run the development stack.
-.PHONY: stack
-stack: deps-development
-	cd $(DEV_DIR) && \
-    ( docker-compose -p $(SERVICE_NAME) up --build; \
-      docker-compose -p $(SERVICE_NAME) stop; \
-      docker-compose -p $(SERVICE_NAME) rm -f; )
-
-# Build production stuff.
-build-binary: build
-	$(DOCKER_RUN_CMD) /bin/sh -c '$(BUILD_BINARY_CMD)'
+.PHONY: default
+default: help
 
 .PHONY: build-image
-build-image:
-	$(BUILD_IMAGE_CMD)
+build-image: ## Builds the production docker image.
+	@$(BUILD_PROD_IMAGE_CMD)
 
-# Dependencies stuff.
-.PHONY: set-k8s-deps
-set-k8s-deps:
-	$(SET_K8S_DEPS_CMD)
+.PHONY: publish-image
+publish-image: ## Publishes the production docker image.
+	@$(PUBLISH_PROD_IMAGE_CMD)
+
+.PHONY: build-dev-image
+build-dev-image: ## Builds the development docker image.
+	@$(BUILD_DEV_IMAGE_CMD)
+
+.PHONY: build
+build: build-dev-image ## Builds the production binary.
+	@$(DOCKER_RUN_CMD) /bin/sh -c '$(BUILD_BINARY_CMD)'
+
+.PHONY: test
+test: build-dev-image  ## Runs unit test.
+	@$(DOCKER_RUN_CMD) /bin/sh -c '$(UNIT_TEST_CMD)'
+
+.PHONY: check
+check: build-dev-image ## Runs checks.
+	@$(DOCKER_RUN_CMD) /bin/sh -c '$(CHECK_CMD)'
+
+.PHONY: integration
+integration: build-dev-image ## Runs integration test.
+	@$(DOCKER_RUN_CMD) /bin/sh -c '$(INTEGRATION_TEST_CMD)'
+
+.PHONY: go-gen
+go-gen: build-dev-image ## Generates go based code.
+	@$(DOCKER_RUN_CMD) /bin/sh -c './scripts/gogen.sh'
+
+.PHONY: kube-gen
+kube-gen: ## Generates Kubernetes based code.
+	/bin/sh -c './scripts/kubegen.sh'
+
+.PHONY: gen
+gen: go-gen kube-gen ## Generates all.
 
 .PHONY: deps
-deps:
-	$(DEPS_CMD)
+deps: ## Fixes the dependencies
+	@$(DOCKER_RUN_CMD) /bin/sh -c './scripts/deps.sh'
 
-k8s-code-gen:
-	$(K8S_CODE_GEN_CMD)
+.PHONY: ci-unit-test
+ci-test: ## Runs unit test in CI environment (without docker).
+	@$(UNIT_TEST_CMD)
 
-openapi-code-gen:
-	$(OPENAPI_CODE_GEN_CMD)
+.PHONY: ci-check
+ci-check: ## Runs checks in CI environment (without docker).
+	@$(CHECK_CMD)
 
-# Test stuff in dev
-.PHONY: test-alerts
-test-alerts:
-	$(DOCKER_ALERTS_TEST_RUN_CMD)
-.PHONY: unit-test
-unit-test: build
-	$(DOCKER_RUN_CMD) /bin/sh -c '$(UNIT_TEST_CMD)'
-.PHONY: integration-test
-integration-test: build
-	$(DOCKER_RUN_CMD) /bin/sh -c '$(INTEGRATION_TEST_CMD)'
-.PHONY: test
-test: integration-test
-.PHONY: test
-ci: test test-alerts
-
-# Mocks stuff in dev
-.PHONY: mocks
-mocks: build
-	# FIX: Problem using go mod with vektra/mockery.
-	#$(DOCKER_RUN_CMD) /bin/sh -c '$(MOCKS_CMD)'
-	$(MOCKS_CMD)
-
-.PHONY: dev
-dev:
-	$(DEV_CMD)
-
-
-.PHONY: push
-push: export PUSH_IMAGE=true
-push: build-image
+.PHONY: ci-integration-test
+ci-integration: ## Runs integraton test in CI environment (without docker).
+	@$(INTEGRATION_TEST_CMD)

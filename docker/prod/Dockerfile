@@ -1,15 +1,17 @@
-FROM golang:1.13-alpine AS build-stage
+FROM golang:1.14-alpine as build-stage
 
 RUN apk --no-cache add \
   g++ \
   git \
-  make
+  make \
+  bash
 
 ARG VERSION
 ENV VERSION=${VERSION}
+
 WORKDIR /src
 COPY . .
-RUN ./hack/scripts/build-binary.sh
+RUN ./scripts/build/build.sh
 
 # Final image.
 FROM alpine:latest

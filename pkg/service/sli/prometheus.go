@@ -47,11 +47,13 @@ func (p *prometheus) Retrieve(sli *monitoringv1alpha1.SLI) (Result, error) {
 	// Make queries concurrently.
 	g, ctx := errgroup.WithContext(promclictx)
 	g.Go(func() error {
-		res.TotalQ, err = p.getVectorMetric(ctx, cli, sli.Prometheus.TotalQuery)
+		result, err := p.getVectorMetric(ctx, cli, sli.Prometheus.TotalQuery)
+		res.TotalQ = result
 		return err
 	})
 	g.Go(func() error {
-		res.ErrorQ, err = p.getVectorMetric(ctx, cli, sli.Prometheus.ErrorQuery)
+		result, err := p.getVectorMetric(ctx, cli, sli.Prometheus.ErrorQuery)
+		res.ErrorQ = result
 		return err
 	})
 
