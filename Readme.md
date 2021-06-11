@@ -1,3 +1,11 @@
+# Deprecated and unmaintained in favor of [Sloth]
+
+**TL;DR: This project will no longer be updated, and is encouraged people use [Sloth] instead.**
+
+The project has not been getting updates for a while, [Sloth] satisfies all the features this projects has and more, also, more up to date.
+
+If you are migrating from this project to [Sloth], check [service-level-operator-sloth-migrator](https://github.com/slok/service-level-operator-sloth-migrator) to migrate easily.
+
 # service-level-operator [![Build Status][travis-image]][travis-url] [![Go Report Card][goreport-image]][goreport-url] [![docker image][quay-image]][quay-url]
 
 Service level operator abstracts and automates the service level of Kubernetes applications by generation SLI & SLOs to be consumed easily by dashboards and alerts and allow that the SLI/SLO's live with the application flow.
@@ -284,3 +292,4 @@ Check the alert [here][multiwindow-alert]
 [grafana-dashboard]: https://grafana.com/dashboards/8793
 [sre-workbook]: https://books.google.es/books?id=fElmDwAAQBAJ
 [multiwindow-alert]: alerts/slo.yaml
+[sloth]: https://github.com/slok/sloth
